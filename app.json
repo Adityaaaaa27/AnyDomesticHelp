@@ -1,4 +1,29 @@
 {
   "name": "AnyDomesticHelp",
-  "displayName": "AnyDomesticHelp"
+  "displayName": "AnyDomesticHelp",
+  "expo": {
+    "name": "AnyDomesticHelp",
+    "slug": "anydomestichelp",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./src/assets/logo.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./src/assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./src/assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      }
+    }
+  }
 }
