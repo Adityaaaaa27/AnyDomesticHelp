@@ -1,6 +1,5 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const nodemailer = require('nodemailer');
 const cors = require('cors');
 require('dotenv').config();
 
@@ -25,38 +24,34 @@ mongoose.connect(MONGODB_URI)
     process.exit(1);
   });
 
-// ─── Nodemailer Setup ────────────────────────────────────────────────────────
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS, // Gmail App Password
-  },
-  tls: {
-    rejectUnauthorized: false, // Bypass self-signed certificate check
-  },
-});
-
-// Helper function to send notification email
-const sendNotificationEmail = async (subject, htmlContent) => {
-  const recipient = process.env.NOTIFICATION_EMAIL || process.env.SMTP_USER;
-  if (!recipient) {
-    console.warn('WARNING: No notification email recipient configured. Skipping email.');
+// Helper function to send registration data to Google Apps Script Web App
+const sendToGoogleSheet = async (formType, data) => {
+  const scriptUrl = process.env.GOOGLE_SCRIPT_URL;
+  if (!scriptUrl) {
+    console.warn('WARNING: GOOGLE_SCRIPT_URL is not defined in env variables. Skipping Google Sheet sync.');
     return;
   }
 
-  const mailOptions = {
-    from: `"AnyDomesticHelp Alerts" <${process.env.SMTP_USER}>`,
-    to: recipient,
-    subject: subject,
-    html: htmlContent,
-  };
-
   try {
-    const info = await transporter.sendMail(mailOptions);
-    console.log('Notification email sent successfully:', info.messageId);
+    const response = await fetch(scriptUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        formType,
+        ...data,
+      }),
+    });
+
+    const resData = await response.json();
+    if (response.ok && resData.success) {
+      console.log(`Successfully synced ${formType} submission to Google Sheet.`);
+    } else {
+      console.error(`Failed to sync ${formType} submission to Google Sheet:`, resData.error || response.statusText);
+    }
   } catch (error) {
-    console.error('Failed to send notification email:', error.message);
+    console.error(`Error syncing ${formType} submission to Google Sheet:`, error.message);
   }
 };
 
@@ -126,23 +121,17 @@ app.post('/api/employer-registration', async (req, res) => {
     const data = new EmployerRegistration(req.body);
     const savedDoc = await data.save();
 
-    // Trigger Notification Email
-    const emailHtml = `
-      <h2>New Employer Registration Alert</h2>
-      <p>A new request has been submitted by an employer.</p>
-      <table border="1" cellpadding="8" style="border-collapse: collapse; width: 100%; max-width: 600px;">
-        <tr><td><strong>Service Selected</strong></td><td>${savedDoc.serviceLabel} (${savedDoc.serviceType})</td></tr>
-        <tr><td><strong>Name</strong></td><td>${savedDoc.name}</td></tr>
-        <tr><td><strong>Phone</strong></td><td>${savedDoc.phone}</td></tr>
-        <tr><td><strong>Email</strong></td><td>${savedDoc.email}</td></tr>
-        <tr><td><strong>City</strong></td><td>${savedDoc.city}</td></tr>
-        <tr><td><strong>Working Hours</strong></td><td>${savedDoc.workingHours}</td></tr>
-        <tr><td><strong>Platform</strong></td><td>${savedDoc.platform}</td></tr>
-        <tr><td><strong>Submitted At</strong></td><td>${savedDoc.createdAt.toLocaleString()}</td></tr>
-      </table>
-    `;
-    // We run it asynchronously in the background so API response is fast
-    sendNotificationEmail(`New Request: ${savedDoc.serviceLabel} - ${savedDoc.name}`, emailHtml);
+    // Trigger Google Sheet sync & email notification
+    sendToGoogleSheet('employer', {
+      name: savedDoc.name,
+      phone: savedDoc.phone,
+      email: savedDoc.email,
+      city: savedDoc.city,
+      workingHours: savedDoc.workingHours,
+      serviceType: savedDoc.serviceType,
+      serviceLabel: savedDoc.serviceLabel,
+      platform: savedDoc.platform,
+    });
 
     res.status(201).json({ success: true, id: savedDoc._id });
   } catch (error) {
@@ -157,21 +146,16 @@ app.post('/api/partner-registration', async (req, res) => {
     const data = new PartnerRegistration(req.body);
     const savedDoc = await data.save();
 
-    const emailHtml = `
-      <h2>New Partner Registration Alert</h2>
-      <p>A new agency/partner wants to collaborate with us.</p>
-      <table border="1" cellpadding="8" style="border-collapse: collapse; width: 100%; max-width: 600px;">
-        <tr><td><strong>Organization/Name</strong></td><td>${savedDoc.fullName}</td></tr>
-        <tr><td><strong>Contact Person</strong></td><td>${savedDoc.contactPerson}</td></tr>
-        <tr><td><strong>Phone</strong></td><td>${savedDoc.phone}</td></tr>
-        <tr><td><strong>Email</strong></td><td>${savedDoc.email}</td></tr>
-        <tr><td><strong>City</strong></td><td>${savedDoc.city}</td></tr>
-        <tr><td><strong>Proposed Details</strong></td><td>${savedDoc.message || 'N/A'}</td></tr>
-        <tr><td><strong>Platform</strong></td><td>${savedDoc.platform}</td></tr>
-        <tr><td><strong>Submitted At</strong></td><td>${savedDoc.createdAt.toLocaleString()}</td></tr>
-      </table>
-    `;
-    sendNotificationEmail(`New Partner: ${savedDoc.fullName}`, emailHtml);
+    // Trigger Google Sheet sync & email notification
+    sendToGoogleSheet('partner', {
+      fullName: savedDoc.fullName,
+      contactPerson: savedDoc.contactPerson,
+      phone: savedDoc.phone,
+      email: savedDoc.email,
+      city: savedDoc.city,
+      message: savedDoc.message,
+      platform: savedDoc.platform,
+    });
 
     res.status(201).json({ success: true, id: savedDoc._id });
   } catch (error) {
@@ -186,21 +170,16 @@ app.post('/api/employee-referral', async (req, res) => {
     const data = new EmployeeReferral(req.body);
     const savedDoc = await data.save();
 
-    const emailHtml = `
-      <h2>New Employee Referral Alert</h2>
-      <p>Someone has referred an employee to our platform.</p>
-      <table border="1" cellpadding="8" style="border-collapse: collapse; width: 100%; max-width: 600px;">
-        <tr><td><strong>Job Category</strong></td><td>${savedDoc.jobCategory}</td></tr>
-        <tr><td><strong>Employee Name</strong></td><td>${savedDoc.employeeName}</td></tr>
-        <tr><td><strong>Referrer Phone</strong></td><td>${savedDoc.referrerPhone}</td></tr>
-        <tr><td><strong>Employee Location</strong></td><td>${savedDoc.location || 'N/A'}</td></tr>
-        <tr><td><strong>Experience</strong></td><td>${savedDoc.experience || 'N/A'}</td></tr>
-        <tr><td><strong>Gender</strong></td><td>${savedDoc.gender || 'N/A'}</td></tr>
-        <tr><td><strong>Platform</strong></td><td>${savedDoc.platform}</td></tr>
-        <tr><td><strong>Submitted At</strong></td><td>${savedDoc.createdAt.toLocaleString()}</td></tr>
-      </table>
-    `;
-    sendNotificationEmail(`New Referral: ${savedDoc.employeeName} (${savedDoc.jobCategory})`, emailHtml);
+    // Trigger Google Sheet sync & email notification
+    sendToGoogleSheet('referral', {
+      jobCategory: savedDoc.jobCategory,
+      employeeName: savedDoc.employeeName,
+      referrerPhone: savedDoc.referrerPhone,
+      location: savedDoc.location,
+      experience: savedDoc.experience,
+      gender: savedDoc.gender,
+      platform: savedDoc.platform,
+    });
 
     res.status(201).json({ success: true, id: savedDoc._id });
   } catch (error) {
@@ -215,19 +194,16 @@ app.post('/api/feedback', async (req, res) => {
     const data = new Feedback(req.body);
     const savedDoc = await data.save();
 
-    const emailHtml = `
-      <h2>New App Feedback</h2>
-      <table border="1" cellpadding="8" style="border-collapse: collapse; width: 100%; max-width: 600px;">
-        <tr><td><strong>User Name</strong></td><td>${savedDoc.name}</td></tr>
-        <tr><td><strong>Phone</strong></td><td>${savedDoc.phone || 'N/A'}</td></tr>
-        <tr><td><strong>Email</strong></td><td>${savedDoc.email || 'N/A'}</td></tr>
-        <tr><td><strong>Rating</strong></td><td>${savedDoc.rating} / 5 (${savedDoc.ratingLabel})</td></tr>
-        <tr><td><strong>Message</strong></td><td>${savedDoc.message}</td></tr>
-        <tr><td><strong>Platform</strong></td><td>${savedDoc.platform}</td></tr>
-        <tr><td><strong>Submitted At</strong></td><td>${savedDoc.createdAt.toLocaleString()}</td></tr>
-      </table>
-    `;
-    sendNotificationEmail(`New App Feedback - Rating: ${savedDoc.rating}★ by ${savedDoc.name}`, emailHtml);
+    // Trigger Google Sheet sync & email notification
+    sendToGoogleSheet('feedback', {
+      name: savedDoc.name,
+      phone: savedDoc.phone,
+      email: savedDoc.email,
+      rating: savedDoc.rating,
+      ratingLabel: savedDoc.ratingLabel,
+      message: savedDoc.message,
+      platform: savedDoc.platform,
+    });
 
     res.status(201).json({ success: true, id: savedDoc._id });
   } catch (error) {
