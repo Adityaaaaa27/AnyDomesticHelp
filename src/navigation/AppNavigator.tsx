@@ -11,8 +11,7 @@ import EmployerRegistrationScreen from '../screens/EmployerRegistrationScreen';
 import FeedbackScreen from '../screens/FeedbackScreen';
 import EmployeeProfilesScreen from '../screens/EmployeeProfilesScreen';
 import SuccessScreen from '../screens/SuccessScreen';
-import OtpVerificationScreen from '../screens/OtpVerificationScreen';
-import CongratsPaymentScreen from '../screens/CongratsPaymentScreen';
+
 import ScanAndPayScreen from '../screens/ScanAndPayScreen';
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -32,8 +31,7 @@ const AppNavigator: React.FC = () => {
         <Stack.Screen name="Feedback" component={FeedbackScreen} />
         <Stack.Screen name="EmployeeProfiles" component={EmployeeProfilesScreen} />
         <Stack.Screen name="Success" component={SuccessScreen} />
-        <Stack.Screen name="OtpVerification" component={OtpVerificationScreen} />
-        <Stack.Screen name="CongratsPayment" component={CongratsPaymentScreen} />
+
         <Stack.Screen name="ScanAndPay" component={ScanAndPayScreen} />
       </Stack.Navigator>
     </NavigationContainer>

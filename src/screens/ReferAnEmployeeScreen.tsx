@@ -1,58 +1,86 @@
+// src/screens/ReferAnEmployeeScreen.tsx
 import React, { useState } from 'react';
-import { StyleSheet, View, Alert } from 'react-native';
+import { StyleSheet, View, Text, Alert } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+
 import ScreenContainer from '../components/layout/ScreenContainer';
 import AppHeader from '../components/navigation/AppHeader';
 import SectionHeading from '../components/layout/SectionHeading';
 import TextInputField from '../components/forms/TextInputField';
 import PhoneInputField from '../components/forms/PhoneInputField';
 import StandardDropdown from '../components/forms/StandardDropdown';
-import SearchableDropdown from '../components/forms/SearchableDropdown';
 import PrimaryButton from '../components/buttons/PrimaryButton';
 import LoadingSpinner from '../components/layout/LoadingSpinner';
 import FooterComponent from '../components/layout/FooterComponent';
 import FeatureImage from '../components/media/FeatureImage';
-import { referEmployeeSchema, ReferEmployeeFormData } from '../utils/validation';
-import { submitReferEmployee } from '../api/referEmployee';
+
+import { submitEmployeeReferral } from '../services/apiService';
 import { JOB_CATEGORIES } from '../constants/jobCategories';
-import { CITIES } from '../constants/cities';
 import colors from '../constants/colors';
 import spacing from '../constants/spacing';
+import typography from '../constants/typography';
+
+const GENDER_OPTIONS = [
+  { label: 'Male', value: 'Male' },
+  { label: 'Female', value: 'Female' },
+  { label: 'Other', value: 'Other' },
+];
+
+const schema = yup.object({
+  jobCategory:  yup.string().required('Please select job category'),
+  employeeName: yup.string().min(2, 'Min 2 characters').required('Employee name is required'),
+  referrerPhone: yup.string()
+                    .matches(/^[6-9]\d{9}$/, 'Enter valid 10-digit mobile number')
+                    .required('Referrer phone number is required'),
+  location:     yup.string().optional(),
+  experience:   yup.string().optional(),
+  gender:       yup.string().optional(),
+});
+type FormValues = yup.InferType<typeof schema>;
 
 const ReferAnEmployeeScreen: React.FC<any> = ({ navigation }) => {
-  const [loading, setLoading] = useState(false);
-
   const {
     control,
     handleSubmit,
+    getValues,
     formState: { errors },
-  } = useForm<ReferEmployeeFormData>({
-    resolver: yupResolver(referEmployeeSchema) as any,
+  } = useForm<FormValues>({
+    resolver: yupResolver(schema) as any,
     defaultValues: {
       jobCategory: '',
-      name: '',
-      phone: '',
+      employeeName: '',
+      referrerPhone: '',
+      location: '',
       experience: '',
-      city: '',
-      message: '',
+      gender: '',
     },
   });
 
-  const onSubmit = async (data: any) => {
-    setLoading(true);
-    const result = await submitReferEmployee(data);
-    setLoading(false);
+  const [submitting, setSubmitting] = useState(false);
 
-    if (result.success) {
+  const onSubmitPress = handleSubmit(async (values) => {
+    setSubmitting(true);
+    try {
+      await submitEmployeeReferral({
+        jobCategory: values.jobCategory,
+        employeeName: values.employeeName,
+        referrerPhone: values.referrerPhone,
+        location: values.location,
+        experience: values.experience,
+        gender: values.gender,
+      });
       navigation.navigate('Success', {
-        message: 'Thank you for referring! The employee details have been registered.',
+        message: `Thank you for the referral!\n\nWe will review the employee details and get back to you on ${values.referrerPhone}.`,
         returnTo: 'MainDrawer',
       });
-    } else {
-      Alert.alert('Submission Failed', result.message);
+    } catch {
+      Alert.alert('Submission Failed', 'Please try again or call us on 022-66661314.');
+    } finally {
+      setSubmitting(false);
     }
-  };
+  });
 
   return (
     <ScreenContainer scrollEnabled={true} keyboardAvoiding={true} backgroundColor={colors.background}>
@@ -69,8 +97,6 @@ const ReferAnEmployeeScreen: React.FC<any> = ({ navigation }) => {
         <FeatureImage sourceUrl="https://www.anydomestichelp.com/images/kaam.jpg" />
       </View>
 
-      <LoadingSpinner visible={loading} />
-
       <View style={styles.form}>
         <Controller
           control={control}
@@ -79,7 +105,7 @@ const ReferAnEmployeeScreen: React.FC<any> = ({ navigation }) => {
             <StandardDropdown
               label="Job Required"
               required={true}
-              options={JOB_CATEGORIES}
+              options={JOB_CATEGORIES.filter(opt => opt.value !== '')}
               selectedValue={value || ''}
               onValueChange={onChange}
               error={errors.jobCategory?.message}
@@ -89,16 +115,15 @@ const ReferAnEmployeeScreen: React.FC<any> = ({ navigation }) => {
 
         <Controller
           control={control}
-          name="name"
-          render={({ field: { onChange, onBlur, value } }) => (
+          name="employeeName"
+          render={({ field: { onChange, value } }) => (
             <TextInputField
               label="Employee Name"
               required={true}
               placeholder="Enter employee name"
-              onBlur={onBlur}
               onChangeText={onChange}
-              value={value}
-              error={errors.name?.message}
+              value={value ?? ''}
+              error={errors.employeeName?.message}
               prefixIcon="👤"
             />
           )}
@@ -106,15 +131,29 @@ const ReferAnEmployeeScreen: React.FC<any> = ({ navigation }) => {
 
         <Controller
           control={control}
-          name="phone"
-          render={({ field: { onChange, onBlur, value } }) => (
+          name="referrerPhone"
+          render={({ field: { onChange, value } }) => (
             <PhoneInputField
-              label="Phone Number"
+              label="Your Phone Number — we will verify this"
               required={true}
-              onBlur={onBlur}
               onChangeText={onChange}
-              value={value}
-              error={errors.phone?.message}
+              value={value ?? ''}
+              error={errors.referrerPhone?.message}
+            />
+          )}
+        />
+
+        <Controller
+          control={control}
+          name="location"
+          render={({ field: { onChange, value } }) => (
+            <TextInputField
+              label="Employee Location / Area"
+              placeholder="Enter area or locality"
+              onChangeText={onChange}
+              value={value ?? ''}
+              error={errors.location?.message}
+              prefixIcon="📍"
             />
           )}
         />
@@ -122,14 +161,12 @@ const ReferAnEmployeeScreen: React.FC<any> = ({ navigation }) => {
         <Controller
           control={control}
           name="experience"
-          render={({ field: { onChange, onBlur, value } }) => (
+          render={({ field: { onChange, value } }) => (
             <TextInputField
               label="Years of Experience"
-              placeholder="Enter years (e.g. 5)"
-              keyboardType="numeric"
-              onBlur={onBlur}
+              placeholder="e.g. 3 years"
               onChangeText={onChange}
-              value={value}
+              value={value ?? ''}
               error={errors.experience?.message}
               prefixIcon="⏱"
             />
@@ -138,45 +175,33 @@ const ReferAnEmployeeScreen: React.FC<any> = ({ navigation }) => {
 
         <Controller
           control={control}
-          name="city"
+          name="gender"
           render={({ field: { onChange, value } }) => (
-            <SearchableDropdown
-              label="Preferred City"
-              options={CITIES}
+            <StandardDropdown
+              label="Gender"
+              options={GENDER_OPTIONS}
               selectedValue={value || ''}
               onValueChange={onChange}
-              error={errors.city?.message}
-            />
-          )}
-        />
-
-        <Controller
-          control={control}
-          name="message"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInputField
-              label="Additional Remarks"
-              placeholder="Any other details (optional)"
-              multiline={true}
-              numberOfLines={4}
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              error={errors.message?.message}
-              prefixIcon="📝"
-              style={styles.textArea}
+              error={errors.gender?.message}
+              placeholder="Select gender"
+              prefixIcon="👥"
             />
           )}
         />
 
         <PrimaryButton
-          label="Submit Employee Details"
-          onPress={handleSubmit(onSubmit)}
+          label="Refer Employee"
+          onPress={onSubmitPress}
+          loading={submitting}
+          disabled={submitting}
           style={styles.submitBtn}
+          icon="👥"
         />
       </View>
 
       <FooterComponent onNavigate={(route) => navigation.navigate(route)} />
+
+      <LoadingSpinner visible={submitting} />
     </ScreenContainer>
   );
 };
@@ -189,13 +214,15 @@ const styles = StyleSheet.create({
   form: {
     marginTop: spacing.md,
   },
-  textArea: {
-    height: 100,
-    textAlignVertical: 'top',
-    paddingTop: spacing.sm,
-  },
   submitBtn: {
     marginTop: spacing.md,
+  },
+  otpNote: {
+    fontSize: typography.fontSize.caption,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    marginTop: spacing.sm,
+    paddingHorizontal: spacing.screenHorizontalPadding,
   },
 });
 

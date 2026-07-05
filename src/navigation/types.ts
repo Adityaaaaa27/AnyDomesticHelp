@@ -21,8 +21,7 @@ export type RootStackParamList = {
   ManagementTeam: undefined;
   RefundCancellation: undefined;
   Success: { message: string; returnTo: keyof RootStackParamList };
-  OtpVerification: { employerName: string; employerPhone: string; expectedOtp: string };
-  CongratsPayment: { employerName: string; employerPhone: string };
+
   ScanAndPay: undefined;
 };
 

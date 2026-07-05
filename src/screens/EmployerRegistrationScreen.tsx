@@ -1,205 +1,166 @@
+// src/screens/EmployerRegistrationScreen.tsx
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, Alert } from 'react-native';
+import {
+  View, ScrollView, Text, StyleSheet, Alert,
+  KeyboardAvoidingView, Platform,
+} from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import ScreenContainer from '../components/layout/ScreenContainer';
-import AppHeader from '../components/navigation/AppHeader';
-import SectionHeading from '../components/layout/SectionHeading';
-import TextInputField from '../components/forms/TextInputField';
-import PhoneInputField from '../components/forms/PhoneInputField';
-import EmailInputField from '../components/forms/EmailInputField';
+import * as yup from 'yup';
+import { useRoute, useNavigation } from '@react-navigation/native';
+
+import AppHeader         from '../components/navigation/AppHeader';
+import SectionHeading    from '../components/layout/SectionHeading';
+import TextInputField    from '../components/forms/TextInputField';
+import PhoneInputField   from '../components/forms/PhoneInputField';
+import EmailInputField   from '../components/forms/EmailInputField';
 import SearchableDropdown from '../components/forms/SearchableDropdown';
-import StandardDropdown from '../components/forms/StandardDropdown';
-import PrimaryButton from '../components/buttons/PrimaryButton';
-import LoadingSpinner from '../components/layout/LoadingSpinner';
-import FooterComponent from '../components/layout/FooterComponent';
-import { employerRegistrationSchema, EmployerRegistrationFormData } from '../utils/validation';
-import { submitEmployerRegistration } from '../api/employerRegistration';
-import { SERVICES, WORKING_HOURS } from '../constants/services';
-import { CITIES } from '../constants/cities';
-import colors from '../constants/colors';
-import spacing from '../constants/spacing';
-import typography from '../constants/typography';
+import StandardDropdown  from '../components/forms/StandardDropdown';
+import PrimaryButton     from '../components/buttons/PrimaryButton';
+import FooterComponent   from '../components/layout/FooterComponent';
+import LoadingSpinner    from '../components/layout/LoadingSpinner';
 
-const EmployerRegistrationScreen: React.FC<any> = ({ route, navigation }) => {
-  const { serviceKey = 'BabySitter', serviceLabel = 'Baby Sitter' } = route.params || {};
-  const [loading, setLoading] = useState(false);
+import { submitEmployerRegistration } from '../services/apiService';
+import { CITIES }                     from '../constants/cities';
+import { WORKING_HOURS, SERVICES }    from '../constants/services';
+import colors                         from '../constants/colors';
+import spacing                        from '../constants/spacing';
+import typography                     from '../constants/typography';
 
-  const selectedService = SERVICES.find((s) => s.key === serviceKey) || SERVICES[0];
+const schema = yup.object({
+  name:         yup.string().min(2, 'Min 2 characters').required('Name is required'),
+  phone:        yup.string()
+                   .matches(/^[6-9]\d{9}$/, 'Enter valid 10-digit mobile number')
+                   .required('Phone is required'),
+  email:        yup.string().email('Enter valid email').required('Email is required'),
+  city:         yup.string().required('Please select your city'),
+  workingHours: yup.string().required('Please select working hours'),
+});
+type FormValues = yup.InferType<typeof schema>;
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<EmployerRegistrationFormData>({
-    resolver: yupResolver(employerRegistrationSchema) as any,
+export default function EmployerRegistrationScreen() {
+  const route      = useRoute<any>();
+  const navigation = useNavigation<any>();
+  const { serviceKey = 'BabySitter', serviceLabel = 'Baby Sitter' } = (route.params || {}) as { serviceKey: string; serviceLabel: string };
+
+  const serviceEmoji = SERVICES.find(s => s.key === serviceKey)?.emoji ?? '👶';
+
+  const { control, handleSubmit, getValues, formState: { errors } } = useForm<FormValues>({
+    resolver: yupResolver(schema) as any,
     defaultValues: {
       name: '',
       phone: '',
       email: '',
       city: '',
-      hours: '',
-    },
+      workingHours: '',
+    }
   });
 
-  const onSubmit = async (data: any) => {
-    setLoading(true);
-    const result = await submitEmployerRegistration(serviceKey, data);
-    setLoading(false);
+  const [submitting,  setSubmitting]  = useState(false);
 
-    if (result.success) {
-      // Generate random 6-digit OTP
-      const otp = Math.floor(100000 + Math.random() * 900000);
-      Alert.alert(
-        'OTP Sent',
-        `A One Time Password (OTP) has been sent to your mobile number ${data.phone}. \n\nFor demo purposes, your OTP is: ${otp}`,
-        [
-          {
-            text: 'OK',
-            onPress: () => {
-              navigation.navigate('OtpVerification', {
-                employerName: data.name,
-                employerPhone: data.phone,
-                expectedOtp: String(otp),
-              });
-            },
-          },
-        ]
-      );
-    } else {
-      Alert.alert('Registration Failed', result.message);
+  // ── Tap "Submit" ────────────────────────────────────────────────
+  const onSubmitPress = handleSubmit(async values => {
+    setSubmitting(true);
+    try {
+      await submitEmployerRegistration({
+        name:         values.name,
+        phone:        values.phone,
+        email:        values.email,
+        city:         values.city,
+        workingHours: values.workingHours,
+        serviceType:  serviceKey,
+        serviceLabel: serviceLabel,
+      });
+      navigation.navigate('Success', {
+        message: `Thank you, ${values.name}!\n\nYour ${serviceLabel} request has been received. Our team will call you on ${values.phone} within 24 hours.`,
+        returnTo: 'MainDrawer',
+      });
+    } catch {
+      Alert.alert('Submission Failed', 'Please try again or call us on 022-66661314.');
+    } finally {
+      setSubmitting(false);
     }
-  };
+  });
 
   return (
-    <ScreenContainer scrollEnabled={true} keyboardAvoiding={true} backgroundColor={colors.background}>
-      <AppHeader
-        title="Registration"
-        showBackButton={true}
-        onBackPress={() => navigation.goBack()}
-        onMenuPress={() => navigation.openDrawer()}
-      />
-
-      <View style={styles.breadcrumb}>
-        <Text style={styles.breadcrumbText}>Services › </Text>
-        <Text style={[styles.breadcrumbText, styles.activeBreadcrumb]}>Registration</Text>
-      </View>
-
-      <SectionHeading title="Employer Registration" />
-
-      {/* Selected Service Badge */}
-      <View style={styles.badgeContainer}>
-        <View style={styles.serviceBadge}>
-          <Text style={styles.badgeEmoji}>{selectedService.emoji}</Text>
-          <Text style={styles.badgeText}>{selectedService.label} Service</Text>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
+      <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+        <AppHeader
+          title="Registration"
+          showBackButton={true}
+          onBackPress={() => navigation.goBack()}
+          onMenuPress={() => navigation.openDrawer()}
+        />
+        
+        <View style={styles.breadcrumb}>
+          <Text style={styles.breadcrumbText}>Services › </Text>
+          <Text style={[styles.breadcrumbText, styles.activeBreadcrumb]}>Registration</Text>
         </View>
-      </View>
 
-      <LoadingSpinner visible={loading} />
+        <View style={styles.container}>
+          <SectionHeading title="Employer Registration" />
 
-      <View style={styles.formCard}>
-        <Controller
-          control={control}
-          name="name"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInputField
-              label="Name of Employer"
-              required={true}
-              placeholder="Enter full name"
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              error={errors.name?.message}
-              prefixIcon="👤"
+          {/* Service badge */}
+          <View style={styles.badgeContainer}>
+            <View style={styles.badge}>
+              <Text style={styles.badgeEmoji}>{serviceEmoji}</Text>
+              <Text style={styles.badgeLabel}>{serviceLabel} Service</Text>
+            </View>
+          </View>
+
+          <View style={styles.formCard}>
+            <Controller control={control} name="name" render={({ field: { onChange, value } }) => (
+              <TextInputField label="Name of Employer" required value={value ?? ''} onChangeText={onChange} error={errors.name?.message} placeholder="Your full name" prefixIcon="👤" />
+            )} />
+
+            <Controller control={control} name="phone" render={({ field: { onChange, value } }) => (
+              <PhoneInputField label="Phone Number" required value={value ?? ''} onChangeText={onChange} error={errors.phone?.message} placeholder="10-digit mobile number" maxLength={10} />
+            )} />
+
+            <Controller control={control} name="email" render={({ field: { onChange, value } }) => (
+              <EmailInputField label="E-MAIL Id" required value={value ?? ''} onChangeText={onChange} error={errors.email?.message} placeholder="your@email.com" />
+            )} />
+
+            <Controller control={control} name="city" render={({ field: { onChange, value } }) => (
+              <SearchableDropdown label="City" required options={CITIES} selectedValue={value ?? ''} onValueChange={onChange} error={errors.city?.message} placeholder="Type or select your city" />
+            )} />
+
+            <Controller control={control} name="workingHours" render={({ field: { onChange, value } }) => (
+              <StandardDropdown label="Working Hours" required options={WORKING_HOURS} selectedValue={value ?? ''} onValueChange={onChange} error={errors.workingHours?.message} placeholder="Select working hours" prefixIcon="⏰" />
+            )} />
+
+            <PrimaryButton
+              label={submitting ? 'Registering…' : 'Register'}
+              onPress={onSubmitPress}
+              loading={submitting}
+              disabled={submitting}
+              style={styles.submitBtn}
             />
-          )}
-        />
-
-        <Controller
-          control={control}
-          name="phone"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <PhoneInputField
-              label="Phone Number"
-              required={true}
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              error={errors.phone?.message}
-            />
-          )}
-        />
-
-        <Controller
-          control={control}
-          name="email"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <EmailInputField
-              label="E-Mail Id"
-              required={true}
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              error={errors.email?.message}
-            />
-          )}
-        />
-
-        <Controller
-          control={control}
-          name="city"
-          render={({ field: { onChange, value } }) => (
-            <SearchableDropdown
-              label="City"
-              required={true}
-              options={CITIES}
-              selectedValue={value || ''}
-              onValueChange={onChange}
-              error={errors.city?.message}
-            />
-          )}
-        />
-
-        <Controller
-          control={control}
-          name="hours"
-          render={({ field: { onChange, value } }) => (
-            <StandardDropdown
-              label="Working Hours"
-              required={true}
-              options={WORKING_HOURS}
-              selectedValue={value || ''}
-              onValueChange={onChange}
-              error={errors.hours?.message}
-              prefixIcon="⏰"
-            />
-          )}
-        />
-
-        <PrimaryButton
-          label="Submit Registration"
-          onPress={handleSubmit(onSubmit)}
-          style={styles.submitBtn}
-          icon="➔"
-        />
-      </View>
-
-      {/* Feature highlight items */}
-      <View style={styles.featuresRow}>
-        <View style={styles.featureBox}>
-          <Text style={styles.featureIcon}>🛡️</Text>
-          <Text style={styles.featureTitle}>Verified Professionals Only</Text>
+          </View>
         </View>
-        <View style={styles.featureBox}>
-          <Text style={styles.featureIcon}>🎧</Text>
-          <Text style={styles.featureTitle}>24/7 Dedicated Support</Text>
-        </View>
-      </View>
 
-      <FooterComponent onNavigate={(route) => navigation.navigate(route)} />
-    </ScreenContainer>
+        {/* Feature highlight items */}
+        <View style={styles.featuresRow}>
+          <View style={styles.featureBox}>
+            <Text style={styles.featureIcon}>🛡️</Text>
+            <Text style={styles.featureTitle}>Verified Professionals Only</Text>
+          </View>
+          <View style={styles.featureBox}>
+            <Text style={styles.featureIcon}>🎧</Text>
+            <Text style={styles.featureTitle}>24/7 Dedicated Support</Text>
+          </View>
+        </View>
+
+        <FooterComponent onNavigate={r => navigation.navigate(r)} />
+      </ScrollView>
+
+      <LoadingSpinner visible={submitting} />
+    </KeyboardAvoidingView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   breadcrumb: {
@@ -215,28 +176,18 @@ const styles = StyleSheet.create({
     color: colors.primary,
     fontWeight: typography.fontWeight.bold,
   },
+  container: { gap: spacing.md },
   badgeContainer: {
     paddingHorizontal: spacing.screenHorizontalPadding,
-    marginBottom: spacing.md,
+    marginBottom: spacing.xs,
   },
-  serviceBadge: {
-    flexDirection: 'row',
-    alignSelf: 'flex-start',
-    backgroundColor: colors.primaryLight,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    borderRadius: 20,
-    alignItems: 'center',
+  badge: {
+    flexDirection: 'row', alignItems: 'center', gap: spacing.sm,
+    backgroundColor: colors.primaryLight, paddingHorizontal: spacing.md, paddingVertical: spacing.sm, borderRadius: 20,
+    alignSelf: 'flex-start'
   },
-  badgeEmoji: {
-    fontSize: 16,
-    marginRight: spacing.xs,
-  },
-  badgeText: {
-    fontSize: typography.fontSize.bodySmall,
-    fontWeight: typography.fontWeight.bold,
-    color: colors.primary,
-  },
+  badgeEmoji: { fontSize: 16 },
+  badgeLabel: { fontSize: typography.fontSize.bodySmall, fontWeight: typography.fontWeight.bold as any, color: colors.primary },
   formCard: {
     backgroundColor: colors.cardBackground,
     borderRadius: spacing.cardBorderRadius,
@@ -254,12 +205,20 @@ const styles = StyleSheet.create({
     marginTop: spacing.md,
     marginHorizontal: spacing.screenHorizontalPadding,
   },
+  note: {
+    fontSize: typography.fontSize.caption,
+    color: colors.textTertiary,
+    textAlign: 'center',
+    marginTop: spacing.sm,
+    paddingHorizontal: spacing.screenHorizontalPadding,
+  },
   featuresRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: spacing.screenHorizontalPadding,
     marginTop: spacing.lg,
     gap: spacing.md,
+    marginBottom: spacing.md,
   },
   featureBox: {
     flex: 1,
@@ -281,5 +240,3 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
-
-export default EmployerRegistrationScreen;
