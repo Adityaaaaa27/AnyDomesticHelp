@@ -1,5 +1,30 @@
 import { CONFIG } from '../config/env';
 import { normalizePhone } from '../utils/validation';
+import { Platform } from 'react-native';
+
+const fetchWithTimeout = async (
+  url: string,
+  options: RequestInit = {},
+  timeoutMs = 12000
+): Promise<Response> => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+    return response;
+  } catch (error: any) {
+    clearTimeout(timeoutId);
+    if (error.name === 'AbortError') {
+      throw new Error('Connection timed out. Please check your network connection or server status.');
+    }
+    throw error;
+  }
+};
 
 // ─── Form 1: Employer Registration ────────────────────────────────────────────
 
@@ -16,7 +41,7 @@ export interface EmployerRegistrationPayload {
 export const submitEmployerRegistration = async (
   data: EmployerRegistrationPayload,
 ): Promise<string> => {
-  const response = await fetch(`${CONFIG.API_BASE_URL}/api/employer-registration`, {
+  const response = await fetchWithTimeout(`${CONFIG.API_BASE_URL}/api/employer-registration`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -52,7 +77,7 @@ export interface PartnerRegistrationPayload {
 export const submitPartnerRegistration = async (
   data: PartnerRegistrationPayload,
 ): Promise<string> => {
-  const response = await fetch(`${CONFIG.API_BASE_URL}/api/partner-registration`, {
+  const response = await fetchWithTimeout(`${CONFIG.API_BASE_URL}/api/partner-registration`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -87,7 +112,7 @@ export interface EmployeeReferralPayload {
 export const submitEmployeeReferral = async (
   data: EmployeeReferralPayload,
 ): Promise<string> => {
-  const response = await fetch(`${CONFIG.API_BASE_URL}/api/employee-referral`, {
+  const response = await fetchWithTimeout(`${CONFIG.API_BASE_URL}/api/employee-referral`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -122,7 +147,7 @@ export interface FeedbackPayload {
 export const submitFeedback = async (
   data: FeedbackPayload,
 ): Promise<string> => {
-  const response = await fetch(`${CONFIG.API_BASE_URL}/api/feedback`, {
+  const response = await fetchWithTimeout(`${CONFIG.API_BASE_URL}/api/feedback`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -142,3 +167,22 @@ export const submitFeedback = async (
   }
   return resData.id;
 };
+
+// ─── Push Notification Token Registration ─────────────────────────────────────
+
+export const registerPushToken = async (token: string): Promise<void> => {
+  const response = await fetchWithTimeout(`${CONFIG.API_BASE_URL}/api/push-token`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      token,
+      platform: Platform.OS,
+    }),
+  });
+
+  const resData = await response.json();
+  if (!response.ok || !resData.success) {
+    throw new Error(resData.error || 'Failed to register push token');
+  }
+};
+
