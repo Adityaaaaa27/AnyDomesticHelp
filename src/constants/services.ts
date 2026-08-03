@@ -1,3 +1,5 @@
+import colors from './colors';
+
 export type ServiceKey =
   | 'BabySitter'
   | 'HouseMaid'
@@ -21,19 +23,19 @@ export interface Service {
 }
 
 export const SERVICES: Service[] = [
-  { key: 'BabySitter',       label: 'Baby Sitter',      emoji: '👶', bgColor: '#FFF3E0' },
-  { key: 'HouseMaid',        label: 'House Maid',       emoji: '🏠', bgColor: '#E8F5E9' },
-  { key: 'Cook',             label: 'Cook',             emoji: '🍳', bgColor: '#FFF8E1' },
-  { key: 'OfficeBoy',        label: 'Office Boy',       emoji: '📦', bgColor: '#FFF3E0' },
-  { key: 'Helper',           label: 'Helper',           emoji: '🧰', bgColor: '#E8F5E9' },
-  { key: 'Nanny',            label: 'Nanny',            emoji: '🤱', bgColor: '#F3E5F5' },
-  { key: 'JapaMaid',         label: 'Japa Maid',        emoji: '🧽', bgColor: '#E8F5E9' },
-  { key: 'Driver',           label: 'Driver',           emoji: '🚗', bgColor: '#FFF8E1' },
-  { key: 'ElderlyCare',      label: 'Elderly Care',     emoji: '🧓', bgColor: '#E3F2FD' },
-  { key: 'PatientCare',      label: 'Patient Care',     emoji: '🩺', bgColor: '#FCE4EC' },
-  { key: 'CookHelper',       label: 'Cook / Helper',    emoji: '🍳', bgColor: '#E3F2FD' },
-  { key: 'HomeTuition',      label: 'Home Tuition',     emoji: '📚', bgColor: '#F3E5F5' },
-  { key: 'Staff_Restaurant', label: 'Restaurant Staff', emoji: '🍽️', bgColor: '#E8F5E9' },
+  { key: 'BabySitter',       label: 'Baby Sitter',      emoji: '👶', bgColor: colors.serviceBg1 },
+  { key: 'HouseMaid',        label: 'House Maid',       emoji: '🏠', bgColor: colors.serviceBg2 },
+  { key: 'Cook',             label: 'Cook',             emoji: '🍳', bgColor: colors.serviceBg3 },
+  { key: 'OfficeBoy',        label: 'Office Boy',       emoji: '📦', bgColor: colors.serviceBg4 },
+  { key: 'Helper',           label: 'Helper',           emoji: '🧰', bgColor: colors.serviceBg5 },
+  { key: 'Nanny',            label: 'Nanny',            emoji: '🤱', bgColor: colors.serviceBg1 },
+  { key: 'JapaMaid',         label: 'Japa Maid',        emoji: '🧽', bgColor: colors.serviceBg2 },
+  { key: 'Driver',           label: 'Driver',           emoji: '🚗', bgColor: colors.serviceBg3 },
+  { key: 'ElderlyCare',      label: 'Elderly Care',     emoji: '🧓', bgColor: colors.serviceBg4 },
+  { key: 'PatientCare',      label: 'Patient Care',     emoji: '🩺', bgColor: colors.serviceBg5 },
+  { key: 'CookHelper',       label: 'Cook / Helper',    emoji: '🍳', bgColor: colors.serviceBg1 },
+  { key: 'HomeTuition',      label: 'Home Tuition',     emoji: '📚', bgColor: colors.serviceBg2 },
+  { key: 'Staff_Restaurant', label: 'Restaurant Staff', emoji: '🍽️', bgColor: colors.serviceBg3 },
 ];
 
 export const CAROUSEL_SERVICES: ServiceKey[] = [

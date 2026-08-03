@@ -7,6 +7,8 @@ import Constants from 'expo-constants';
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
+    shouldShowBanner: true,
+    shouldShowList: true,
     shouldPlaySound: true,
     shouldSetBadge: false,
   }),
@@ -28,10 +30,9 @@ export async function registerForPushNotificationsAsync(): Promise<string | unde
     });
   }
 
-  // 2. Push notifications only work on physical devices (not simulators)
+  // 2. Log device type for debugging
   if (!Device.isDevice) {
-    console.warn('Push notifications require a physical device. Simulator detected.');
-    return undefined;
+    console.log('Running on simulator/emulator. Attempting Expo Push Token generation...');
   }
 
   try {
@@ -69,4 +70,22 @@ export async function registerForPushNotificationsAsync(): Promise<string | unde
   }
 
   return token;
+}
+
+/**
+ * Trigger an instant local notification for testing inside Expo Go.
+ */
+export async function sendTestLocalNotification(title?: string, body?: string): Promise<void> {
+  try {
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: title || '🔔 AnyDomesticHelp Test',
+        body: body || 'Custom push notifications feature is active and ready!',
+        sound: 'default',
+      },
+      trigger: null,
+    });
+  } catch (err) {
+    console.warn('Local notification trigger error:', err);
+  }
 }

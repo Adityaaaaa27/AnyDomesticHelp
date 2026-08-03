@@ -47,6 +47,7 @@ const styles = StyleSheet.create({
   },
   heading: {
     fontSize: typography.fontSize.h2,
+    fontFamily: typography.fontFamilyHeading,
     fontWeight: typography.fontWeight.bold,
     color: colors.textPrimary,
     lineHeight: typography.lineHeight.h2,

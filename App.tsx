@@ -14,29 +14,22 @@ function App(): React.JSX.Element {
   const responseListener = useRef<Notifications.Subscription>();
 
   useEffect(() => {
-    // 1. Register for push notifications and retrieve token
+    // 1. Register for push notifications silently in background
     registerForPushNotificationsAsync().then(async (token) => {
       if (token) {
-        // Display token in an alert for easy testing on Expo Go
-        Alert.alert(
-          'Expo Push Token',
-          token,
-          [{ text: 'Copy Token / OK', onPress: () => console.log('Token Alert Dismissed') }]
-        );
-
-        // Send the token to our MongoDB backend
-        try {
-          await registerPushToken(token);
-          console.log('Push token successfully registered with backend database.');
-        } catch (error) {
-          console.error('Failed to register push token with backend:', error);
-        }
+        console.log('Push token acquired on launch:', token);
+        await registerPushToken(token);
       }
     });
 
-    // 2. Listener for foreground notifications
+    // 2. Listener for foreground notifications (shows Alert popup inside app)
     notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {
       console.log('Foreground notification received:', notification);
+      const title = notification.request.content.title;
+      const body = notification.request.content.body;
+      if (title || body) {
+        Alert.alert(`🔔 ${title || 'Notification'}`, body || '');
+      }
     });
 
     // 3. Listener for taps/interactions with notification
@@ -47,10 +40,10 @@ function App(): React.JSX.Element {
     // Clean up subscriptions on unmount
     return () => {
       if (notificationListener.current) {
-        Notifications.removeNotificationSubscription(notificationListener.current);
+        notificationListener.current.remove();
       }
       if (responseListener.current) {
-        Notifications.removeNotificationSubscription(responseListener.current);
+        responseListener.current.remove();
       }
     };
   }, []);

@@ -35,6 +35,7 @@ export type BottomTabParamList = {
 
 export type DrawerParamList = {
   MainTabs: undefined;
+  Home: undefined;
   HowItWorks: undefined;
   AboutUs: undefined;
   PartnerUs: undefined;

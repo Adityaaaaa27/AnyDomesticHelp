@@ -1,14 +1,31 @@
 import { Platform } from 'react-native';
 
 const typography = {
+  // Body & General Sans-Serif Font (Inter)
   fontFamily: Platform.select({
-    ios: 'System',
-    android: 'Roboto',
+    ios: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+    android: 'Inter, Roboto, sans-serif',
+    default: 'Inter, system-ui, -apple-system, sans-serif',
+  }) as string,
+
+  // Display / Heading Serif Font (Fraunces)
+  fontFamilyHeading: Platform.select({
+    ios: 'Fraunces, Georgia, "Times New Roman", serif',
+    android: 'Fraunces, serif',
+    default: 'Fraunces, Georgia, serif',
   }) as string,
 
   fontFamilyBold: Platform.select({
-    ios: 'System',
-    android: 'Roboto',
+    ios: 'Inter, -apple-system, sans-serif',
+    android: 'Inter, Roboto, sans-serif',
+    default: 'Inter, sans-serif',
+  }) as string,
+
+  // Monospace Font (IBM Plex Mono)
+  fontFamilyMono: Platform.select({
+    ios: 'IBM Plex Mono, Menlo, Courier, monospace',
+    android: 'IBM Plex Mono, monospace',
+    default: 'IBM Plex Mono, monospace',
   }) as string,
 
   fontSize: {
@@ -57,3 +74,4 @@ const typography = {
 } as const;
 
 export default typography;
+

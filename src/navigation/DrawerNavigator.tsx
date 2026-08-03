@@ -31,6 +31,7 @@ const DrawerNavigator: React.FC = () => {
       }}
     >
       <Drawer.Screen name="MainTabs" component={HomeScreen} />
+      <Drawer.Screen name="Home" component={HomeScreen} />
       <Drawer.Screen name="HowItWorks" component={HowItWorksScreen} />
       <Drawer.Screen name="AboutUs" component={AboutUsScreen} />
       <Drawer.Screen name="PartnerUs" component={PartnerUsScreen} />

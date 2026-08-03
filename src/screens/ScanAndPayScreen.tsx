@@ -25,7 +25,7 @@ const ScanAndPayScreen: React.FC<any> = ({ navigation }) => {
   };
 
   return (
-    <ScreenContainer scrollEnabled={true} backgroundColor="#E0F2F1">
+    <ScreenContainer scrollEnabled={true} backgroundColor={colors.background}>
       <AppHeader
         title="Payment"
         showBackButton={true}
@@ -96,11 +96,11 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.xl,
   },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: colors.cardBackground,
     borderRadius: 16,
     padding: spacing.lg,
     alignItems: 'center',
-    shadowColor: '#000',
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 5,
@@ -108,37 +108,38 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: 24,
+    fontFamily: typography.fontFamilyHeading,
     fontWeight: typography.fontWeight.bold,
-    color: '#1b5e20',
+    color: colors.primary,
     marginBottom: spacing.md,
   },
   infoText: {
     fontSize: 15,
     fontWeight: typography.fontWeight.semibold,
-    color: '#333',
+    color: colors.textPrimary,
     textAlign: 'center',
     lineHeight: 22,
     marginBottom: spacing.xs,
   },
   phoneLink: {
-    color: '#1565c0',
+    color: colors.textLink,
     textDecorationLine: 'underline',
     fontWeight: 'bold',
   },
   callInstruction: {
     fontSize: 14,
     fontWeight: typography.fontWeight.semibold,
-    color: '#333',
+    color: colors.textPrimary,
     textAlign: 'center',
     lineHeight: 22,
     marginBottom: spacing.lg,
   },
   qrCard: {
     width: '90%',
-    backgroundColor: '#fafafa',
+    backgroundColor: colors.primaryLight,
     borderRadius: 20,
     borderWidth: 1.5,
-    borderColor: '#e0f2f1',
+    borderColor: colors.primaryBorder,
     padding: spacing.md,
     alignItems: 'center',
     marginBottom: spacing.lg,
@@ -154,20 +155,20 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: '#00695c',
+    backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: spacing.sm,
   },
   avatarChar: {
-    color: '#fff',
+    color: colors.textWhite,
     fontWeight: 'bold',
     fontSize: 14,
   },
   nameText: {
     fontSize: 16,
     fontWeight: typography.fontWeight.bold,
-    color: '#333',
+    color: colors.textPrimary,
   },
   qrImage: {
     width: 220,
@@ -177,12 +178,12 @@ const styles = StyleSheet.create({
   upiIdText: {
     fontSize: 13,
     fontWeight: typography.fontWeight.semibold,
-    color: '#666',
+    color: colors.textSecondary,
     marginBottom: spacing.xs,
   },
   qrFooterText: {
     fontSize: 12,
-    color: '#888',
+    color: colors.textTertiary,
   },
   buttonRow: {
     width: '100%',
