@@ -1,18 +1,12 @@
 {
-  "name": "AnyDomesticHelp",
-  "displayName": "AnyDomesticHelp",
   "expo": {
-    "name": "AnyDomesticHelp",
+    "name": "Any Domestic Help",
     "slug": "anydomestichelp",
-    "version": "1.0.0",
+    "version": "1.0.3",
     "orientation": "portrait",
     "icon": "./src/assets/logo.png",
     "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./src/assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
+
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -22,21 +16,39 @@
     },
     "android": {
       "package": "com.anydomestichelp.app",
-      "versionCode": 1,
+      "versionCode": 4,
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#0E6F5C"
       },
       "permissions": [
         "NOTIFICATIONS",
         "POST_NOTIFICATIONS"
       ]
     },
+    "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "image": "./src/assets/splash.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#0E6F5C"
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./src/assets/logo.png",
+          "color": "#0E6F5C"
+        }
+      ]
+    ],
     "extra": {
       "eas": {
-        "projectId": "1d0b8bf2-a6b0-402d-bb4a-ae03c991d401"
+        "projectId": "3d6bc07b-e261-41f5-9005-b8343875e8f7"
       }
     },
-    "owner": "adityaaa27s-team"
+    "owner": "adityab27"
   }
 }

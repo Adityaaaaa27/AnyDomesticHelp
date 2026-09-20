@@ -3,6 +3,6 @@ export const CONFIG = {
   API_BASE_URL: 'https://anydomestichelp.com',
 
   // Google Sheets Apps Script endpoint for direct sync & email delivery
-  GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzkbUhfkdpT8q_Vwm5IbsVanX9dZ_mqlpYLnEosYoGJ-1MxhQ66yxI680kbxPVqW3UNCg/exec',
+  GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzRjPy5-M7O7Y92Qq2CcgYhP7ZdTnxrlUCd2wucahe1e3k6rd6QviCp87d89ovtuJq67w/exec',
 };
 

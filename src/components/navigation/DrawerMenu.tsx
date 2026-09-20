@@ -4,29 +4,31 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import colors from '../../constants/colors';
 import typography from '../../constants/typography';
 import spacing from '../../constants/spacing';
+import { useLanguage } from '../../context/LanguageContext';
 
 interface DrawerMenuProps {
   navigation: any;
   state: any;
 }
 
-const DRAWER_ITEMS = [
-  { label: 'Home', route: 'Home', icon: '🏠' },
-  { label: 'How It Works', route: 'HowItWorks', icon: '❓' },
-  { label: 'About Us', route: 'AboutUs', icon: '🏢' },
-  { label: 'Partner Us', route: 'PartnerUs', icon: '🤝' },
-  { label: 'Refer an Employee', route: 'ReferAnEmployee', icon: '👤' },
-  { label: 'Contact Us', route: 'Contact', icon: '📞' },
-  { label: 'FAQ', route: 'FAQ', icon: '💬' },
-  { label: 'Management Team', route: 'ManagementTeam', icon: '👥' },
-  { label: 'Privacy Policy', route: 'PrivacyPolicy', icon: '🔒' },
-  { label: 'Terms & Conditions', route: 'TermsAndConditions', icon: '📄' },
-  { label: 'Refund and Cancellation', route: 'RefundCancellation', icon: '💸' },
-];
-
 const DrawerMenu: React.FC<DrawerMenuProps> = ({ navigation, state }) => {
+  const { t } = useLanguage();
   // Get active route index or name
   const currentRouteName = state?.routeNames[state.index];
+
+  const DRAWER_ITEMS = [
+    { label: t.home, route: 'Home' },
+    { label: t.howItWorks, route: 'HowItWorks' },
+    { label: t.aboutUs, route: 'AboutUs' },
+    { label: t.partnerUs, route: 'PartnerUs' },
+    { label: t.referEmployee, route: 'ReferAnEmployee' },
+    { label: t.contactUs, route: 'Contact' },
+    { label: t.faq, route: 'FAQ' },
+    { label: t.managementTeam, route: 'ManagementTeam' },
+    { label: t.privacyPolicy, route: 'PrivacyPolicy' },
+    { label: t.termsConditions, route: 'TermsAndConditions' },
+    { label: t.refundCancellation, route: 'RefundCancellation' },
+  ];
 
   const handleNavigate = (route: string) => {
     navigation.closeDrawer();
@@ -36,7 +38,7 @@ const DrawerMenu: React.FC<DrawerMenuProps> = ({ navigation, state }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Any Domestic Help</Text>
+        <Text style={styles.headerTitle}>{t.appName}</Text>
         <Text style={styles.headerSubtitle}>Mumbai's Manpower Agency</Text>
       </View>
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -51,7 +53,6 @@ const DrawerMenu: React.FC<DrawerMenuProps> = ({ navigation, state }) => {
               accessibilityRole="button"
               accessibilityLabel={`Navigate to ${item.label}`}
             >
-              <Text style={styles.icon}>{item.icon}</Text>
               <Text style={[styles.label, isActive && styles.activeLabel]}>
                 {item.label}
               </Text>

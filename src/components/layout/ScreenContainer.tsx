@@ -20,6 +20,7 @@ import spacing from '../../constants/spacing';
 
 interface ScreenContainerProps {
   children: React.ReactNode;
+  header?: React.ReactNode;
   scrollEnabled?: boolean;
   keyboardAvoiding?: boolean;
   backgroundColor?: string;
@@ -28,6 +29,7 @@ interface ScreenContainerProps {
 
 const ScreenContainer: React.FC<ScreenContainerProps> = ({
   children,
+  header,
   scrollEnabled = true,
   keyboardAvoiding = false,
   backgroundColor = colors.background,
@@ -43,7 +45,7 @@ const ScreenContainer: React.FC<ScreenContainerProps> = ({
       {children}
     </ScrollView>
   ) : (
-    <View style={[styles.contentContainer, contentContainerStyle]}>
+    <View style={[styles.flex, contentContainerStyle]}>
       {children}
     </View>
   );
@@ -52,14 +54,13 @@ const ScreenContainer: React.FC<ScreenContainerProps> = ({
     return (
       <SafeAreaView style={[styles.container, { backgroundColor }]}>
         <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
+        {header}
         <KeyboardAvoidingView
           style={styles.flex}
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
         >
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            {content}
-          </TouchableWithoutFeedback>
+          {content}
         </KeyboardAvoidingView>
       </SafeAreaView>
     );
@@ -68,6 +69,7 @@ const ScreenContainer: React.FC<ScreenContainerProps> = ({
   return (
     <SafeAreaView style={[styles.container, { backgroundColor }]}>
       <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
+      {header}
       {content}
     </SafeAreaView>
   );

@@ -79,6 +79,32 @@ npx eas build -p android --profile preview
 ```bash
 npx eas build -p android --profile production
 ```
+* **Active EAS Build:** [Expo Dashboard Build Link](https://expo.dev/accounts/adityab27/projects/anydomestichelp/builds/168bf35d-b090-4b98-8aa9-e4321c3bc20a)
+* **Full Step-by-Step Play Store Guide:** [PLAY-STORE-DEPLOYMENT-GUIDE.md](file:///c:/Users/USER/Desktop/anydomestichelp/AnyDomesticHelp/PLAY-STORE-DEPLOYMENT-GUIDE.md)
 
 ---
 *Documented and saved for AnyDomesticHelp project record.*
+
+---
+
+## 7. Troubleshooting & Build Fixes
+
+### Issue: EAS Android Build Failure on Gradle Task `:react-native-reanimated:compileReleaseJavaWithJavac`
+* **Date:** August 4, 2026
+* **Error Logs:**
+  ```text
+  Execution failed for task ':react-native-reanimated:compileReleaseJavaWithJavac'.
+  ReanimatedNativeHierarchyManager.java:283: error: no suitable method found for updateLayout(int,int,int,int,int,int)
+  NativeProxy.java:40: error: cannot find symbol context.getRuntimeExecutor()
+  ReactFeatureFlags.enableMountHooks = true; -> error: cannot find symbol enableMountHooks
+  ```
+* **Root Cause:** Incompatibility between `react-native-reanimated` (`~3.10.1`) and React Native `0.76.7` (Expo SDK 52). React Native 0.76 introduced internal Java API changes that broke compilation of older `react-native-reanimated` Java sources.
+* **Resolution:** 
+  1. Updated `react-native-reanimated` in `package.json` from `~3.10.1` to **`~3.16.1`** (the official version compatible with Expo SDK 52 / RN 0.76).
+  2. Executed `npm install` to synchronize `package-lock.json`.
+  3. Re-triggered build with:
+     ```bash
+     eas build --platform android --profile preview
+     ```
+
+

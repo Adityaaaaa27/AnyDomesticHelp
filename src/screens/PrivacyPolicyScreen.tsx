@@ -11,13 +11,18 @@ import spacing from '../constants/spacing';
 
 const PrivacyPolicyScreen: React.FC<any> = ({ navigation }) => {
   return (
-    <ScreenContainer scrollEnabled={true} backgroundColor={colors.background}>
-      <AppHeader
-        title="Privacy Policy"
-        showBackButton={true}
-        onBackPress={() => navigation.goBack()}
-        onMenuPress={() => navigation.openDrawer()}
-      />
+    <ScreenContainer
+      scrollEnabled={true}
+      backgroundColor={colors.background}
+      header={
+        <AppHeader
+          title="Privacy Policy"
+          showBackButton={true}
+          onBackPress={() => navigation.goBack()}
+          onMenuPress={() => navigation.openDrawer()}
+        />
+      }
+    >
 
       <SectionHeading title="Privacy Policy" />
 

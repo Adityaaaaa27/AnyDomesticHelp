@@ -11,13 +11,18 @@ import spacing from '../constants/spacing';
 
 const FAQScreen: React.FC<any> = ({ navigation }) => {
   return (
-    <ScreenContainer scrollEnabled={true} backgroundColor={colors.background}>
-      <AppHeader
-        title="FAQ"
-        showBackButton={true}
-        onBackPress={() => navigation.goBack()}
-        onMenuPress={() => navigation.openDrawer()}
-      />
+    <ScreenContainer
+      scrollEnabled={true}
+      backgroundColor={colors.background}
+      header={
+        <AppHeader
+          title="FAQ"
+          showBackButton={true}
+          onBackPress={() => navigation.goBack()}
+          onMenuPress={() => navigation.openDrawer()}
+        />
+      }
+    >
 
       <SectionHeading title="Frequently Asked Questions" />
 

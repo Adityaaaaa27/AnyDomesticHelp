@@ -11,14 +11,18 @@ import typography from '../constants/typography';
 
 const ManagementTeamScreen: React.FC<any> = ({ navigation }) => {
   return (
-    <ScreenContainer scrollEnabled={true} backgroundColor={colors.background}>
-      <AppHeader
-        title="Management"
-        showBackButton={true}
-        onBackPress={() => navigation.goBack()}
-        onMenuPress={() => navigation.openDrawer()}
-      />
-
+    <ScreenContainer
+      scrollEnabled={true}
+      backgroundColor={colors.background}
+      header={
+        <AppHeader
+          title="Management Team"
+          showBackButton={true}
+          onBackPress={() => navigation.goBack()}
+          onMenuPress={() => navigation.openDrawer()}
+        />
+      }
+    >
       <SectionHeading title="Management Team" />
 
       <View style={styles.imageContainer}>

@@ -29,19 +29,19 @@ const typography = {
   }) as string,
 
   fontSize: {
-    h1: 28,
-    h2: 22,
-    h3: 18,
-    body: 15,
+    h1: 36, // Larger for hero
+    h2: 28, // Larger for section titles
+    h3: 20,
+    body: 16, // Slightly larger body
     bodySmall: 14,
     caption: 12,
     button: 16,
     buttonSmall: 14,
     label: 14,
     error: 12,
-    tab: 11,
+    tab: 12,
     badge: 10,
-    sectionTitle: 20,
+    sectionTitle: 24, // larger section titles
   },
 
   fontWeight: {
@@ -53,9 +53,9 @@ const typography = {
   },
 
   lineHeight: {
-    h1: 36,
-    h2: 30,
-    h3: 26,
+    h1: 44, // adjusted
+    h2: 36, // adjusted
+    h3: 28, // adjusted
     body: 24,
     bodySmall: 22,
     caption: 18,
@@ -69,7 +69,7 @@ const typography = {
     normal: 0,
     wide: 0.5,
     wider: 1,
-    heading: 0.3,
+    heading: -0.5, // Tighter for serifs like Leafora
   },
 } as const;
 

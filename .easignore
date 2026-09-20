@@ -1,0 +1,14 @@
+node_modules/
+.expo/
+.git/
+android/app/build/
+android/.gradle/
+android/.cxx/
+android/build/
+ios/build/
+php-backend/
+php-backend.zip
+*.zip
+*.apk
+*.aab
+*.tar.gz

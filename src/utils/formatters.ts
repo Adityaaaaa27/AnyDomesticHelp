@@ -3,7 +3,7 @@
  */
 
 /**
- * Format a phone number for display (e.g., "9820108341" → "98201 08341")
+ * Format a phone number for display (e.g., "7977409406" → "79774 09406")
  */
 export function formatPhoneNumber(phone: string): string {
   const clean = phone.replace(/[^0-9]/g, '');

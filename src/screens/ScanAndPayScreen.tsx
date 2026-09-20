@@ -11,28 +11,32 @@ import { qrcode } from '../assets/images';
 const ScanAndPayScreen: React.FC<any> = ({ navigation }) => {
   const handlePayViaUPI = () => {
     // Launch standard UPI link intent (e.g. upi://pay)
-    const upiUrl = 'upi://pay?pa=clopes024-2@okicici&pn=Christopher%20Lopes&am=1000&cu=INR&tn=Registration%20Fee';
+    const upiUrl = 'upi://pay?pa=mumbaichris60@okhdfcbank&pn=chris%20Mumbai&am=1000&cu=INR&tn=Registration%20Fee';
     Linking.openURL(upiUrl).catch(() => {
       Alert.alert(
-        'UPI Apps Mising',
+        'UPI Apps Missing',
         'Could not open a UPI app directly. Please scan the QR code using your GPay, PhonePe, Paytm, or BHIM app to complete the payment.'
       );
     });
   };
 
   const handleCall = () => {
-    Linking.openURL('tel:9820108341');
+    Linking.openURL('tel:7977409406');
   };
 
   return (
-    <ScreenContainer scrollEnabled={true} backgroundColor={colors.background}>
-      <AppHeader
-        title="Payment"
-        showBackButton={true}
-        onBackPress={() => navigation.goBack()}
-        onMenuPress={() => navigation.openDrawer()}
-      />
-
+    <ScreenContainer
+      scrollEnabled={true}
+      backgroundColor={colors.background}
+      header={
+        <AppHeader
+          title="Scan & Pay"
+          showBackButton={true}
+          onBackPress={() => navigation.goBack()}
+          onMenuPress={() => navigation.openDrawer()}
+        />
+      }
+    >
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.card}>
           <Text style={styles.header}>Scan & Pay Or</Text>
@@ -40,31 +44,20 @@ const ScanAndPayScreen: React.FC<any> = ({ navigation }) => {
           <Text style={styles.infoText}>
             You can pay us using UPI, on{' '}
             <Text style={styles.phoneLink} onPress={() => handlePayViaUPI()}>
-              9820108341 (Pay via UPI)
+              7977409406 (Pay via UPI)
             </Text>
           </Text>
 
           <Text style={styles.callInstruction}>
             After paying, please call us on{' '}
             <Text style={styles.phoneLink} onPress={handleCall}>
-              9820108341
+              7977409406
             </Text>
           </Text>
 
           {/* QR Code Card */}
           <View style={styles.qrCard}>
-            <View style={styles.nameHeader}>
-              <View style={styles.avatarCircle}>
-                <Text style={styles.avatarChar}>C</Text>
-              </View>
-              <Text style={styles.nameText}>Christopher Lopes</Text>
-            </View>
-
             <Image source={qrcode} style={styles.qrImage} resizeMode="contain" />
-
-            <Text style={styles.upiIdText}>UPI ID: clopes024-2@okicici</Text>
-            
-            <Text style={styles.qrFooterText}>Scan to pay with any UPI app</Text>
           </View>
 
           <View style={styles.buttonRow}>
@@ -73,7 +66,7 @@ const ScanAndPayScreen: React.FC<any> = ({ navigation }) => {
               onPress={() => {
                 Alert.alert(
                   'Payment Submitted',
-                  'Thank you! Your payment details are being verified. We will contact you shortly.',
+                  'Thank you! We will verify your payment and get back to you shortly. You can also call or WhatsApp us on 7977409406.',
                   [
                     {
                       text: 'OK',
@@ -135,55 +128,24 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
   },
   qrCard: {
-    width: '90%',
-    backgroundColor: colors.primaryLight,
+    width: '100%',
+    maxWidth: 290,
+    backgroundColor: '#ffffff',
     borderRadius: 20,
     borderWidth: 1.5,
     borderColor: colors.primaryBorder,
-    padding: spacing.md,
+    padding: spacing.sm,
     alignItems: 'center',
     marginBottom: spacing.lg,
-  },
-  nameHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'flex-start',
-    marginBottom: spacing.md,
-    marginLeft: spacing.sm,
-  },
-  avatarCircle: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: colors.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: spacing.sm,
-  },
-  avatarChar: {
-    color: colors.textWhite,
-    fontWeight: 'bold',
-    fontSize: 14,
-  },
-  nameText: {
-    fontSize: 16,
-    fontWeight: typography.fontWeight.bold,
-    color: colors.textPrimary,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 4,
   },
   qrImage: {
-    width: 220,
-    height: 220,
-    marginBottom: spacing.sm,
-  },
-  upiIdText: {
-    fontSize: 13,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.textSecondary,
-    marginBottom: spacing.xs,
-  },
-  qrFooterText: {
-    fontSize: 12,
-    color: colors.textTertiary,
+    width: 250,
+    height: 345,
   },
   buttonRow: {
     width: '100%',

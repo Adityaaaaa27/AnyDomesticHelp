@@ -24,13 +24,18 @@ const TermsAndConditionsScreen: React.FC<any> = ({ route, navigation }) => {
   const currentClauses = activeTab === 'employee' ? EMPLOYEE_TERMS : EMPLOYER_TERMS;
 
   return (
-    <ScreenContainer scrollEnabled={true} backgroundColor={colors.background}>
-      <AppHeader
-        title="Terms & Conditions"
-        showBackButton={true}
-        onBackPress={() => navigation.goBack()}
-        onMenuPress={() => navigation.openDrawer()}
-      />
+    <ScreenContainer
+      scrollEnabled={true}
+      backgroundColor={colors.background}
+      header={
+        <AppHeader
+          title="Terms & Conditions"
+          showBackButton={true}
+          onBackPress={() => navigation.goBack()}
+          onMenuPress={() => navigation.openDrawer()}
+        />
+      }
+    >
 
       <SectionHeading title="Terms and Conditions" />
 

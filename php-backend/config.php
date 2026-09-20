@@ -16,8 +16,11 @@ define('DB_NAME',     'anydomestichelp');            // Local database name
 define('DB_USER',     'root');                       // XAMPP default username
 define('DB_PASSWORD', '');                           // XAMPP default password is blank
 
+// ─── Owner Email for Direct Notifications ─────────────────────────────────────
+define('OWNER_EMAIL', 'technominds11@gmail.com, anydomestichelp10@gmail.com');
+
 // ─── Google Sheets Apps Script URL ───────────────────────────────────────────
-define('GOOGLE_SCRIPT_URL', 'https://script.google.com/macros/s/AKfycbzkbUhfkdpT8q_Vwm5IbsVanX9dZ_mqlpYLnEosYoGJ-1MxhQ66yxI680kbxPVqW3UNCg/exec');
+define('GOOGLE_SCRIPT_URL', 'https://script.google.com/macros/s/AKfycbzRjPy5-M7O7Y92Qq2CcgYhP7ZdTnxrlUCd2wucahe1e3k6rd6QviCp87d89ovtuJq67w/exec');
 
 // ─── CORS Headers ────────────────────────────────────────────────────────────
 // Allow the mobile app (and any origin) to call these API endpoints.
@@ -127,6 +130,9 @@ function sendToGoogleSheet(string $formType, array $data): void {
         return;
     }
 
+    // ─── Direct Email Notification via GoDaddy Mail ─────────────────────────
+    sendEmailNotification("New " . ucfirst($formType) . " Submission - AnyDomesticHelp", $data);
+
     $resData = json_decode($response, true);
     if ($httpCode >= 200 && $httpCode < 300 && isset($resData['success']) && $resData['success']) {
         error_log("Successfully synced {$formType} submission to Google Sheet.");
@@ -134,6 +140,44 @@ function sendToGoogleSheet(string $formType, array $data): void {
         $errorMsg = $resData['error'] ?? "HTTP {$httpCode}";
         error_log("Failed to sync {$formType} to Google Sheet: {$errorMsg}");
     }
+}
+
+// ─── Direct Email Notification ───────────────────────────────────────────────
+function sendEmailNotification(string $subject, array $fields): void {
+    $to = OWNER_EMAIL;
+    if (empty($to)) return;
+
+    $headers = [
+        'MIME-Version: 1.0',
+        'Content-type: text/html; charset=utf-8',
+        'From: AnyDomesticHelp <noreply@anydomestichelp.com>',
+        'Reply-To: noreply@anydomestichelp.com',
+        'X-Mailer: PHP/' . phpversion()
+    ];
+
+    $rows = '';
+    foreach ($fields as $key => $value) {
+        $label = ucwords(str_replace(['_', '-'], ' ', $key));
+        $val = htmlspecialchars((string)$value);
+        $rows .= "<tr><td style='padding:8px 12px;font-weight:bold;color:#333;border-bottom:1px solid #eee;width:35%;'>{$label}</td><td style='padding:8px 12px;color:#555;border-bottom:1px solid #eee;'>{$val}</td></tr>";
+    }
+
+    $html = "
+    <div style='font-family:Arial,sans-serif;max-width:600px;margin:0 auto;border:1px solid #e0e0e0;border-radius:8px;overflow:hidden;'>
+      <div style='background:#0E6F5C;color:#ffffff;padding:16px 20px;'>
+        <h2 style='margin:0;font-size:18px;'>AnyDomesticHelp — New Notification</h2>
+      </div>
+      <div style='padding:20px;'>
+        <h3 style='margin-top:0;color:#0E6F5C;'>{$subject}</h3>
+        <table style='width:100%;border-collapse:collapse;margin-top:10px;'>
+          {$rows}
+        </table>
+        <p style='margin-top:20px;font-size:12px;color:#888;'>Sent automatically from the AnyDomesticHelp app on " . date('Y-m-d H:i:s') . "</p>
+      </div>
+    </div>
+    ";
+
+    @mail($to, $subject, $html, implode("\r\n", $headers));
 }
 
 // ─── Method Check ────────────────────────────────────────────────────────────

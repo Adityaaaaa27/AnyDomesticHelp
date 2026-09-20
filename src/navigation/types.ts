@@ -23,6 +23,7 @@ export type RootStackParamList = {
   Success: { message: string; returnTo: keyof RootStackParamList };
 
   ScanAndPay: undefined;
+  Payment: { message?: string } | undefined;
 };
 
 export type BottomTabParamList = {

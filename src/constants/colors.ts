@@ -1,120 +1,120 @@
 const colors = {
-  // Primary / Verified Brand Teal Palette
-  primary: '#0E6F5C',       // --color-verified-500 (Primary Theme Color)
-  primaryDark: '#0B5C4C',   // --color-verified-600
-  primaryDeep: '#094A3D',   // --color-verified-700
-  primaryLight: '#E9F4F1',  // --color-verified-50
-  primaryBorder: '#CBE6DE', // --color-verified-100
-  primaryMuted: '#6FADA0',  // --color-verified-300
-  primaryDarkest: '#06322A',// --color-verified-900
+  // Primary / Botanical Green Palette
+  primary: '#334A36',       // Main Dark Olive Green
+  primaryDark: '#233825',
+  primaryDeep: '#1A281B',
+  primaryLight: '#E8EFE9',  // Very soft green for backgrounds
+  primaryBorder: '#D1DFD3',
+  primaryMuted: '#839C86',
+  primaryDarkest: '#111B12',
 
-  // Accent / Coral Colors (Buttons, CTA, Alerts)
-  accent: '#C1533A',        // --color-coral-500
-  accentDark: '#A4432C',    // --color-coral-600
-  accentLight: '#F3DDD6',   // --color-coral-100
+  // Accent Colors
+  accent: '#799E75',        // Lighter soft leafy green
+  accentDark: '#5E7D5A',
+  accentLight: '#E2EBE1',
 
   // Background / Paper Colors
-  background: '#FBF8F4',        // --color-paper (Main App Body)
-  backgroundGrey: '#F2EDE4',    // --color-paper-sunken (Section BG)
-  backgroundDark: '#06322A',    // --color-verified-900 (Dark Drawer/Footer)
-  backgroundCard: '#FFFFFF',    // --color-paper-raised (Card BG)
+  background: '#F6F4EE',        // Cream / Off-white background (like screenshot)
+  backgroundGrey: '#EAE6DB',    // Slightly darker cream
+  backgroundDark: '#334A36',
+  backgroundCard: '#FFFFFF',    // White for elevated cards
 
   // Text & Ink Colors
-  textPrimary: '#14231F',   // --color-ink (Primary dark text)
-  textSecondary: '#3D4A45', // --color-ink-soft
-  textTertiary: '#5B6764',  // --color-slate (Muted text)
+  textPrimary: '#1E231F',   // Almost black, slight green tint
+  textSecondary: '#5A665D', // Muted dark green/gray
+  textTertiary: '#8D9990',
   textWhite: '#FFFFFF',
-  textLink: '#0E6F5C',
-  textGold: '#D98E2B',      // --color-amber-500
+  textLink: '#334A36',
+  textGold: '#C49749',
 
   // Status & Alert Colors
-  error: '#C1533A',         // Warm Coral error/warning
-  success: '#00BC7D',       // --color-emerald-500
-  warning: '#D98E2B',       // --color-amber-500
-  info: '#0E6F5C',
+  error: '#BA5B4E',
+  success: '#5B8C5A',
+  warning: '#C49749',
+  info: '#334A36',
 
   // UI Borders, Lines & Shadows
-  border: '#E4DFD6',        // --color-line
-  borderFocused: '#0E6F5C',
-  divider: '#E4DFD6',
-  shadow: 'rgba(20, 35, 31, 0.08)',
-  overlay: 'rgba(20, 35, 31, 0.5)',
-  placeholder: '#5B6764',
-  disabled: '#A0AAB0',
-  disabledBg: '#F2EDE4',
+  border: '#E8E4D9',
+  borderFocused: '#334A36',
+  divider: '#E8E4D9',
+  shadow: 'rgba(51, 74, 54, 0.05)',
+  overlay: 'rgba(30, 35, 31, 0.4)',
+  placeholder: '#8D9990',
+  disabled: '#B3BCB5',
+  disabledBg: '#EAE6DB',
 
   // Cards & Inputs
   cardBackground: '#FFFFFF',
-  cardShadow: 'rgba(20, 35, 31, 0.06)',
+  cardShadow: 'rgba(0, 0, 0, 0.04)',
   inputBackground: '#FFFFFF',
 
   // Category & Service Card Colors
-  serviceBg1: '#E9F4F1',
-  serviceBg2: '#F3DDD6',
-  serviceBg3: '#FFFBEB',
-  serviceBg4: '#F2EDE4',
-  serviceBg5: '#CBE6DE',
-  serviceBg6: '#F7E6C4',
+  serviceBg1: '#E8EFE9',
+  serviceBg2: '#F3E8E3',
+  serviceBg3: '#F4F0DE',
+  serviceBg4: '#EAE6DB',
+  serviceBg5: '#E1EBE2',
+  serviceBg6: '#F0E6D2',
 
   // Navigation & Tabs
-  tabActive: '#0E6F5C',
-  tabInactive: '#5B6764',
-  tabBackground: '#FFFFFF',
+  tabActive: '#334A36',
+  tabInactive: '#A2AD9A',
+  tabBackground: '#F6F4EE',
 
   // Drawer & Footer
-  footerBackground: '#06322A', // --color-verified-900
-  footerText: '#E9F4F1',       // --color-verified-50
-  footerLink: '#EABF72',       // --color-amber-300
+  footerBackground: '#334A36',
+  footerText: '#F6F4EE',
+  footerLink: '#E2EBE1',
 
   // Badges & Ratings
-  badgeBlue: '#0E6F5C',
-  badgeGreen: '#00BC7D',
+  badgeBlue: '#334A36',
+  badgeGreen: '#799E75',
   badgeText: '#FFFFFF',
 
-  feedbackBg: '#0E6F5C',
+  feedbackBg: '#334A36',
   feedbackText: '#FFFFFF',
 
-  requiredStar: '#C1533A',
-  ratingGold: '#D98E2B',
+  requiredStar: '#BA5B4E',
+  ratingGold: '#C49749',
 
   // Full Color Palette Tokens
   verified: {
-    50: '#E9F4F1',
-    100: '#CBE6DE',
-    300: '#6FADA0',
-    500: '#0E6F5C',
-    600: '#0B5C4C',
-    700: '#094A3D',
-    900: '#06322A',
+    50: '#E8EFE9',
+    100: '#D1DFD3',
+    300: '#839C86',
+    500: '#334A36',
+    600: '#233825',
+    700: '#1A281B',
+    900: '#111B12',
   },
   coral: {
-    100: '#F3DDD6',
-    500: '#C1533A',
-    600: '#A4432C',
+    100: '#F5E6E3',
+    500: '#BA5B4E',
+    600: '#9C4C41',
   },
   amber: {
-    50: '#FFFBEB',
-    100: '#F7E6C4',
-    200: '#FEE685',
-    300: '#EABF72',
-    500: '#D98E2B',
-    600: '#B8741D',
+    50: '#F9F5EA',
+    100: '#F0E6D2',
+    200: '#E6D3B1',
+    300: '#CDB17D',
+    500: '#C49749',
+    600: '#A37D3D',
   },
   emerald: {
-    300: '#5EE9B5',
-    500: '#00BC7D',
-    600: '#009966',
-    700: '#007A55',
+    300: '#8DBD8C',
+    500: '#5B8C5A',
+    600: '#4A7349',
+    700: '#385737',
   },
   paper: {
-    default: '#FBF8F4',
+    default: '#F6F4EE',
     raised: '#FFFFFF',
-    sunken: '#F2EDE4',
+    sunken: '#EAE6DB',
   },
   ink: {
-    default: '#14231F',
-    soft: '#3D4A45',
-    slate: '#5B6764',
+    default: '#1E231F',
+    soft: '#5A665D',
+    slate: '#8D9990',
   },
 } as const;
 

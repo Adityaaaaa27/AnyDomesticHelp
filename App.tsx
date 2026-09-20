@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import AppNavigator from './src/navigation/AppNavigator';
+import { LanguageProvider } from './src/context/LanguageContext';
 import { registerForPushNotificationsAsync } from './src/utils/notifications';
 import * as Notifications from 'expo-notifications';
 import { Alert, LogBox } from 'react-native';
@@ -10,8 +11,8 @@ import { registerPushToken } from './src/services/apiService';
 LogBox.ignoreLogs(['Must use physical device']);
 
 function App(): React.JSX.Element {
-  const notificationListener = useRef<Notifications.Subscription>();
-  const responseListener = useRef<Notifications.Subscription>();
+  const notificationListener = useRef<Notifications.Subscription | undefined>(undefined);
+  const responseListener = useRef<Notifications.Subscription | undefined>(undefined);
 
   useEffect(() => {
     // 1. Register for push notifications silently in background
@@ -50,7 +51,9 @@ function App(): React.JSX.Element {
 
   return (
     <SafeAreaProvider>
-      <AppNavigator />
+      <LanguageProvider>
+        <AppNavigator />
+      </LanguageProvider>
     </SafeAreaProvider>
   );
 }

@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import colors from '../../constants/colors';
 import typography from '../../constants/typography';
 import spacing from '../../constants/spacing';
+import { useLanguage } from '../../context/LanguageContext';
 
 interface AppHeaderProps {
   onMenuPress: () => void;
@@ -16,10 +17,13 @@ interface AppHeaderProps {
 const AppHeader: React.FC<AppHeaderProps> = ({
   onMenuPress,
   onProfilePress,
-  title = 'Any Domestic Help',
+  title,
   showBackButton = false,
   onBackPress,
 }) => {
+  const { t, toggleLanguage } = useLanguage();
+  const displayTitle = title ?? t.appName;
+
   return (
       <View style={styles.container}>
         <View style={styles.leftSection}>
@@ -50,21 +54,20 @@ const AppHeader: React.FC<AppHeaderProps> = ({
 
         <View style={styles.titleSection}>
           <Text style={styles.title} numberOfLines={1}>
-            {title}
+            {displayTitle}
           </Text>
         </View>
 
         <View style={styles.rightSection}>
-          {onProfilePress && (
-            <TouchableOpacity
-              onPress={onProfilePress}
-              style={styles.iconButton}
-              accessibilityRole="button"
-              accessibilityLabel="User profile"
-            >
-              <Text style={styles.profileIcon}>👤</Text>
-            </TouchableOpacity>
-          )}
+          {/* Language Toggle Button */}
+          <TouchableOpacity
+            onPress={toggleLanguage}
+            style={styles.langButton}
+            accessibilityRole="button"
+            accessibilityLabel="Toggle language"
+          >
+            <Text style={styles.langText}>{t.langToggle}</Text>
+          </TouchableOpacity>
         </View>
       </View>
   );
@@ -98,7 +101,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   rightSection: {
-    width: 44,
+    width: 80,
     alignItems: 'flex-end',
     justifyContent: 'center',
   },
@@ -132,6 +135,19 @@ const styles = StyleSheet.create({
   profileIcon: {
     fontSize: 22,
     color: colors.primary,
+  },
+  langButton: {
+    backgroundColor: colors.primary,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 14,
+    minWidth: 60,
+    alignItems: 'center',
+  },
+  langText: {
+    fontSize: 12,
+    color: colors.textWhite,
+    fontWeight: typography.fontWeight.bold,
   },
 });
 

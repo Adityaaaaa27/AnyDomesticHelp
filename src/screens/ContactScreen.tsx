@@ -15,13 +15,18 @@ const OFFICE_ADDRESS = '54, Mamta \'A\' wing, A.M. Marg, Prabhadevi, Mumbai - 40
 
 const ContactScreen: React.FC<any> = ({ navigation }) => {
   return (
-    <ScreenContainer scrollEnabled={true} backgroundColor={colors.background}>
-      <AppHeader
-        title="Contact Us"
-        showBackButton={true}
-        onBackPress={() => navigation.goBack()}
-        onMenuPress={() => navigation.openDrawer()}
-      />
+    <ScreenContainer
+      scrollEnabled={true}
+      backgroundColor={colors.background}
+      header={
+        <AppHeader
+          title="Contact Us"
+          showBackButton={true}
+          onBackPress={() => navigation.goBack()}
+          onMenuPress={() => navigation.openDrawer()}
+        />
+      }
+    >
 
       <SectionHeading title="Contact Info" />
 
@@ -63,12 +68,12 @@ const ContactScreen: React.FC<any> = ({ navigation }) => {
       <ContactInfoRow
         type="phone"
         label="Call Support"
-        value="022-66661314"
+        value="7977409406"
       />
       <ContactInfoRow
         type="whatsapp"
         label="WhatsApp Chat"
-        value="9820108341"
+        value="7977409406"
       />
       <ContactInfoRow
         type="email"

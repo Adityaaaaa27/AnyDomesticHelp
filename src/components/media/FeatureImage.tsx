@@ -20,22 +20,15 @@ const FeatureImage: React.FC<FeatureImageProps> = ({
   borderRadius = spacing.cardBorderRadius,
   style,
 }) => {
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   return (
     <View style={[styles.container, { aspectRatio, borderRadius }, style]}>
-      {loading && !error && (
-        <ActivityIndicator style={styles.spinner} color={colors.primary} />
-      )}
       <Image
         source={{ uri: sourceUrl }}
         style={[styles.image, { borderRadius }]}
         resizeMode="cover"
-        onLoadStart={() => setLoading(true)}
-        onLoadEnd={() => setLoading(false)}
         onError={() => {
-          setLoading(false);
           setError(true);
         }}
       />

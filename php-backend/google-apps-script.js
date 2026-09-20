@@ -16,7 +16,7 @@
  */
 
 // ─── CONFIGURATION ─────────────────────────────────────────────────────────────
-var OWNER_EMAIL = "anydomestichelp@gmail.com"; // Change to owner's email address
+var OWNER_EMAIL = "technominds11@gmail.com, anydomestichelp10@gmail.com"; // Comma-separated recipients
 
 // ─── 1. CUSTOM ADMIN MENU IN GOOGLE SHEETS ──────────────────────────────────────
 function onOpen() {
@@ -143,7 +143,15 @@ function sendBroadcastNotification(title, body) {
   );
 }
 
-// ─── 4. WEB APP HTTP POST RECEIVER ──────────────────────────────────────────────
+// ─── 4. WEB APP HTTP GET & POST RECEIVERS ───────────────────────────────────────
+function doGet(e) {
+  return ContentService.createTextOutput(JSON.stringify({ 
+    status: "ok", 
+    message: "AnyDomesticHelp Google Apps Script Web App is LIVE & ACTIVE!",
+    timestamp: new Date().toISOString()
+  })).setMimeType(ContentService.MimeType.JSON);
+}
+
 function doPost(e) {
   try {
     var contents = e.postData.contents;
@@ -272,15 +280,53 @@ function getOrCreateSheet(ss, sheetName, headers) {
   return sheet;
 }
 
+// ─── 5. EMAIL NOTIFICATIONS WITH LIVE DELIVERY LOGS ──────────────────────────────
+function testSendEmail() {
+  sendEmailNotification('Test Email Alert', 'This is a test email sent from Google Apps Script editor.\nIf you see this, email notifications are 100% active!');
+  Logger.log('Test email sent to ' + OWNER_EMAIL);
+}
+
 function sendEmailNotification(subject, bodyText) {
   if (!OWNER_EMAIL) return;
+  var emailStatus = "SENT";
+  var errorDetails = "Delivered via Gmail API";
+
+  var htmlContent = "<div style='font-family:Arial,sans-serif;padding:18px;border:1px solid #0E6F5C;border-radius:8px;max-width:560px;'>"
+    + "<div style='background:#0E6F5C;color:#ffffff;padding:12px 16px;border-radius:6px;margin-bottom:15px;'>"
+    + "<h2 style='margin:0;font-size:16px;'>AnyDomesticHelp — " + subject + "</h2>"
+    + "</div>"
+    + "<pre style='font-family:Arial,sans-serif;white-space:pre-wrap;background:#f5f8f7;padding:14px;border-radius:6px;border:1px solid #e0e0e0;font-size:14px;color:#222;'>" + bodyText + "</pre>"
+    + "<p style='font-size:12px;color:#888;margin-top:15px;margin-bottom:0;'>Sent automatically from AnyDomesticHelp Lead Notification System.</p>"
+    + "</div>";
+
   try {
-    MailApp.sendEmail({
-      to: OWNER_EMAIL,
-      subject: '[AnyDomesticHelp] ' + subject,
-      body: bodyText + '\n\n— Sent automatically from AnyDomesticHelp App'
+    GmailApp.sendEmail(OWNER_EMAIL, '[AnyDomesticHelp] ' + subject, bodyText, {
+      htmlBody: htmlContent,
+      name: 'AnyDomesticHelp Alerts'
     });
-  } catch (e) {
-    Logger.log('Error sending email notification: ' + e.toString());
+  } catch (e1) {
+    try {
+      MailApp.sendEmail({
+        to: OWNER_EMAIL,
+        subject: '[AnyDomesticHelp] ' + subject,
+        body: bodyText,
+        htmlBody: htmlContent,
+        name: 'AnyDomesticHelp Alerts'
+      });
+      errorDetails = "Delivered via MailApp fallback";
+    } catch (e2) {
+      emailStatus = "FAILED";
+      errorDetails = e2.toString();
+      Logger.log("Email sending error: " + errorDetails);
+    }
+  }
+
+  // Record live status to a "System Logs" tab in your Google Sheet!
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var logSheet = getOrCreateSheet(ss, 'System Logs', ['Timestamp', 'Notification Type', 'Recipient', 'Status', 'Details']);
+    logSheet.appendRow([new Date(), subject, OWNER_EMAIL, emailStatus, errorDetails]);
+  } catch (logErr) {
+    Logger.log("Failed to write log: " + logErr.toString());
   }
 }

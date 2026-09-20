@@ -1,27 +1,17 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import ScreenContainer from '../components/layout/ScreenContainer';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Image, Platform } from 'react-native';
 import AppHeader from '../components/navigation/AppHeader';
-import SectionHeading from '../components/layout/SectionHeading';
-import PrimaryButton from '../components/buttons/PrimaryButton';
-import ServiceEmojiButton from '../components/buttons/ServiceEmojiButton';
-import ImageCarousel from '../components/media/ImageCarousel';
-import HomeProfilePreviewCard from '../components/cards/HomeProfilePreviewCard';
-import FooterComponent from '../components/layout/FooterComponent';
+import ScreenContainer from '../components/layout/ScreenContainer';
+import HeroCarousel from '../components/home/HeroCarousel';
 import { SERVICES, CAROUSEL_SERVICES, CAROUSEL_IMAGES, Service, ServiceKey } from '../constants/services';
+import { EMPLOYEE_PROFILES } from '../constants/employeeProfiles';
 import colors from '../constants/colors';
 import spacing from '../constants/spacing';
 import typography from '../constants/typography';
+import { useLanguage } from '../context/LanguageContext';
 
 const HomeScreen: React.FC<any> = ({ navigation }) => {
-  const carouselItems = CAROUSEL_SERVICES.map((key: ServiceKey) => {
-    const data = CAROUSEL_IMAGES[key];
-    return {
-      key,
-      label: data.label,
-      imageUrl: data.image,
-    };
-  });
+  const { t, language } = useLanguage();
 
   const handleServiceSelect = (key: string, label: string) => {
     navigation.navigate('EmployerRegistration', { serviceKey: key, serviceLabel: label });
@@ -31,175 +21,282 @@ const HomeScreen: React.FC<any> = ({ navigation }) => {
     navigation.navigate(route);
   };
 
+  const featuredProfiles = EMPLOYEE_PROFILES.slice(0, 5);
+
   return (
-    <ScreenContainer scrollEnabled={true} backgroundColor={colors.background}>
+    <ScreenContainer scrollEnabled={false} backgroundColor={colors.background}>
       <AppHeader onMenuPress={() => navigation.openDrawer()} />
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+        
+        {/* ANIMATED HERO CAROUSEL SLIDER */}
+        <HeroCarousel onSelectService={handleServiceSelect} />
 
-      <View style={styles.heroSection}>
-        <Text style={styles.heroGreeting}>Hi 👋</Text>
-        <Text style={styles.heroTitle}>
-          Find the perfect <Text style={styles.heroAccent}>Helper</Text> for your home
-        </Text>
-      </View>
+        {/* OUR SERVICES - AESTHETIC HORIZONTAL BARS */}
+        <View style={[styles.sectionHeader, { marginTop: spacing.xl }]}>
+          <Text style={styles.sectionTitle}>{t.ourServices}</Text>
+        </View>
+        <View style={styles.servicesList}>
+          {SERVICES.map((item: Service) => {
+            const displayLabel = language === 'hi' && item.labelHi ? item.labelHi : item.label;
+            const displayDesc = language === 'hi' && item.descHi ? item.descHi : item.desc;
 
-      <SectionHeading title="What services are you looking for?" />
+            return (
+              <TouchableOpacity 
+                key={item.key} 
+                style={styles.serviceBar}
+                activeOpacity={0.75}
+                onPress={() => handleServiceSelect(item.key, item.label)}
+              >
+                {/* Left: Real High-Definition Photo */}
+                <View style={styles.serviceBarImageContainer}>
+                  <Image 
+                    source={{ uri: item.imageUrl }} 
+                    style={styles.serviceBarImage}
+                    resizeMode="cover"
+                  />
+                </View>
 
-      {/* Grid of services */}
-      <View style={styles.gridContainer}>
-        {SERVICES.map((item: Service) => (
-          <View key={item.key} style={styles.gridItem}>
-            <ServiceEmojiButton
-              emoji={item.emoji}
-              label={item.label}
-              bgColor={item.bgColor}
-              onPress={() => handleServiceSelect(item.key, item.label)}
-            />
-          </View>
-        ))}
-      </View>
+                {/* Right / Center: Title + Short Aesthetic Description */}
+                <View style={styles.serviceBarTextContainer}>
+                  <Text style={styles.serviceBarTitle}>{displayLabel}</Text>
+                  <Text style={styles.serviceBarDesc} numberOfLines={2}>
+                    {displayDesc}
+                  </Text>
+                </View>
 
-      {/* Image Carousel */}
-      <ImageCarousel
-        items={carouselItems}
-        onItemPress={(key, label) => handleServiceSelect(key, label)}
-      />
+                {/* Right Arrow Pill */}
+                <View style={styles.serviceBarArrowWrapper}>
+                  <Text style={styles.serviceBarArrow}>→</Text>
+                </View>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
 
-      {/* Company Overview section */}
-      <View style={styles.aboutCard}>
-        <Text style={styles.aboutHeading}>About Any Domestic Help</Text>
-        <Text style={styles.aboutText}>
-          We are India's most trusted platform for connecting households with verified domestic professionals. From caring babysitters to skilled cooks, our mission is to provide reliable, professional, and accessible domestic support to enhance your quality of life. Every provider is background-checked to ensure the safety and peace of mind of your family.
-        </Text>
-      </View>
+        {/* FEATURED PROFILES */}
+        <View style={[styles.sectionHeader, { marginTop: spacing.lg }]}>
+          <Text style={styles.sectionTitle}>{t.featuredProfiles}</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('EmployeeProfiles', { page: 1 })}>
+            <Text style={styles.viewAllText}>{t.seeAll}</Text>
+          </TouchableOpacity>
+        </View>
 
-      {/* Employee Profiles Preview */}
-      <View style={styles.previewHeader}>
-        <Text style={styles.previewTitle}>Few Employee Profiles</Text>
-        <Text
-          style={styles.moreLink}
-          onPress={() => navigation.navigate('EmployeeProfiles', { page: 1 })}
-        >
-          More ›
-        </Text>
-      </View>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.profilesScroll}>
+          {featuredProfiles.map((profile) => (
+             <TouchableOpacity 
+               key={profile.id} 
+               style={styles.profileCard} 
+               activeOpacity={0.9}
+               onPress={() => navigation.navigate('EmployeeProfiles', { page: 1 })}
+             >
+               <View style={styles.profileHeader}>
+                 <Image source={{uri: profile.imageUrl}} style={styles.profileImage} />
+                 <View style={styles.ratingBadge}>
+                   <Text style={styles.ratingText}>★ 4.8</Text>
+                 </View>
+               </View>
+               <View style={styles.profileDetails}>
+                 <Text style={styles.profileName}>{profile.name}</Text>
+                 <Text style={styles.profileRole}>{profile.jobCategory}</Text>
+                 <View style={styles.profileDivider} />
+                 <Text style={styles.profileExp}>{profile.experience} • Mumbai</Text>
+               </View>
+             </TouchableOpacity>
+          ))}
+        </ScrollView>
 
-      <HomeProfilePreviewCard
-        name="Sunita Verma"
-        jobCategory="Professional Babysitter"
-        imageUrl="https://www.anydomestichelp.com/images/img33.jpg"
-        onPressMore={() => navigation.navigate('EmployeeProfiles', { page: 1 })}
-      />
-
-      {/* Feedback CTA Card */}
-      <View style={styles.feedbackCard}>
-        <Text style={styles.feedbackTitle}>Feedback</Text>
-        <Text style={styles.feedbackSubtitle}>
-          How was your experience with our domestic helpers? Your feedback helps us maintain high standards of service.
-        </Text>
-        <PrimaryButton
-          label="Share Your Feedback"
-          onPress={() => navigation.navigate('Feedback')}
-          style={styles.feedbackBtn}
-        />
-      </View>
-
-      <FooterComponent onNavigate={handleNavigate} />
+        <View style={{height: 60}} />
+      </ScrollView>
     </ScreenContainer>
   );
 };
 
 const styles = StyleSheet.create({
-  heroSection: {
-    paddingHorizontal: spacing.screenHorizontalPadding,
-    marginTop: spacing.md,
-    marginBottom: spacing.xs,
+  container: {
+    flex: 1,
+    backgroundColor: colors.background, // Cream #F6F4EE
   },
-  heroGreeting: {
-    fontSize: typography.fontSize.bodySmall,
+  scrollContent: {
+    paddingBottom: 40,
+  },
+  trustBanner: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginHorizontal: spacing.screenHorizontalPadding,
+    marginTop: 24,
+    marginBottom: 32,
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    backgroundColor: colors.cardBackground,
+    borderRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.03,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  trustItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  trustIcon: {
+    fontSize: 16,
+  },
+  trustText: {
+    fontSize: 12,
     color: colors.textSecondary,
     fontWeight: typography.fontWeight.semibold,
   },
-  heroTitle: {
-    fontSize: typography.fontSize.h1 - 2,
-    fontWeight: typography.fontWeight.bold,
-    color: colors.textPrimary,
-    lineHeight: typography.lineHeight.h1 - 2,
-    marginTop: spacing.xs,
+  trustDivider: {
+    width: 1,
+    height: 20,
+    backgroundColor: colors.border,
   },
-  heroAccent: {
-    color: colors.primary,
-  },
-  gridContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    paddingHorizontal: spacing.screenHorizontalPadding - 4,
-    justifyContent: 'space-between',
-    marginBottom: spacing.md,
-  },
-  gridItem: {
-    width: '24%',
-    alignItems: 'center',
-    marginBottom: spacing.md,
-  },
-  aboutCard: {
-    backgroundColor: colors.primaryLight + '50',
-    padding: spacing.lg,
-    borderRadius: spacing.cardBorderRadius,
-    marginHorizontal: spacing.screenHorizontalPadding,
-    marginBottom: spacing.lg,
-  },
-  aboutHeading: {
-    fontSize: typography.fontSize.body,
-    fontWeight: typography.fontWeight.bold,
-    color: colors.primary,
-    marginBottom: spacing.sm,
-  },
-  aboutText: {
-    fontSize: typography.fontSize.bodySmall,
-    color: colors.textSecondary,
-    lineHeight: typography.lineHeight.bodySmall,
-  },
-  previewHeader: {
+  sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: spacing.screenHorizontalPadding,
-    marginBottom: spacing.sm,
+    marginBottom: 20,
   },
-  previewTitle: {
-    fontSize: typography.fontSize.body,
-    fontWeight: typography.fontWeight.bold,
+  sectionTitle: {
+    fontFamily: typography.fontFamilyHeading,
+    fontSize: 24,
+    fontWeight: '800',
     color: colors.textPrimary,
+    letterSpacing: -0.4,
   },
-  moreLink: {
-    fontSize: typography.fontSize.bodySmall,
+  viewAllText: {
+    fontSize: 14,
     color: colors.primary,
     fontWeight: typography.fontWeight.bold,
   },
-  feedbackCard: {
-    backgroundColor: colors.primary,
-    borderRadius: spacing.cardBorderRadius,
-    padding: spacing.lg,
-    marginHorizontal: spacing.screenHorizontalPadding,
-    marginTop: spacing.md,
+  servicesList: {
+    paddingHorizontal: spacing.screenHorizontalPadding,
+    gap: 12,
+  },
+  serviceBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#C4D7CD', // Darker teal green aesthetic card
+    borderRadius: 20,
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+    minHeight: 100,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.45)',
+  },
+  serviceBarImageContainer: {
+    width: 76,
+    height: 76,
+    borderRadius: 16,
+    overflow: 'hidden',
+    backgroundColor: colors.backgroundGrey,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.6)',
+  },
+  serviceBarImage: {
+    width: '100%',
+    height: '100%',
+  },
+  serviceBarTextContainer: {
+    flex: 1,
+    marginLeft: 14,
+    marginRight: 8,
+    justifyContent: 'center',
+  },
+  serviceBarTitle: {
+    fontSize: 16,
+    fontFamily: typography.fontFamilyHeading,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.textPrimary,
+    marginBottom: 4,
+  },
+  serviceBarDesc: {
+    fontSize: 12.5,
+    color: colors.textSecondary,
+    lineHeight: 17,
+  },
+  serviceBarArrowWrapper: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255,255,255,0.6)',
+    justifyContent: 'center',
     alignItems: 'center',
   },
-  feedbackTitle: {
-    fontSize: typography.fontSize.h2,
+  serviceBarArrow: {
+    fontSize: 14,
+    color: colors.primary,
     fontWeight: typography.fontWeight.bold,
-    color: colors.textWhite,
-    marginBottom: spacing.sm,
   },
-  feedbackSubtitle: {
-    fontSize: typography.fontSize.caption + 1,
-    color: 'rgba(255,255,255,0.85)',
-    textAlign: 'center',
-    lineHeight: 18,
-    marginBottom: spacing.md,
+  profilesScroll: {
+    paddingHorizontal: spacing.screenHorizontalPadding,
+    gap: 16,
   },
-  feedbackBtn: {
+  profileCard: {
+    width: 240,
     backgroundColor: colors.cardBackground,
-    width: '85%',
+    borderRadius: 24,
+    padding: 16,
+    marginRight: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.04,
+    shadowRadius: 10,
+    elevation: 3,
+  },
+  profileHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 16,
+  },
+  profileImage: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: colors.backgroundGrey,
+  },
+  ratingBadge: {
+    backgroundColor: colors.primaryLight,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  ratingText: {
+    fontSize: 12,
+    color: colors.primary,
+    fontWeight: typography.fontWeight.bold,
+  },
+  profileDetails: {},
+  profileName: {
+    fontFamily: typography.fontFamilyHeading,
+    fontSize: 18,
+    color: colors.textPrimary,
+    marginBottom: 4,
+  },
+  profileRole: {
+    fontSize: 13,
+    color: colors.primary,
+    fontWeight: typography.fontWeight.medium,
+    marginBottom: 12,
+  },
+  profileDivider: {
+    height: 1,
+    backgroundColor: colors.border,
+    marginBottom: 12,
+  },
+  profileExp: {
+    fontSize: 12,
+    color: colors.textSecondary,
   },
 });
 

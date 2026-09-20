@@ -93,18 +93,28 @@ const FeedbackScreen: React.FC<any> = ({ navigation }) => {
   });
 
   return (
-    <ScreenContainer scrollEnabled={true} keyboardAvoiding={true} backgroundColor={colors.background}>
-      <AppHeader
-        title="Feedback"
-        showBackButton={true}
-        onBackPress={() => navigation.goBack()}
-        onMenuPress={() => navigation.openDrawer()}
-      />
+    <ScreenContainer
+      scrollEnabled={true}
+      keyboardAvoiding={true}
+      backgroundColor={colors.background}
+      header={
+        <AppHeader
+          title="Feedback"
+          showBackButton={true}
+          onBackPress={() => navigation.goBack()}
+          onMenuPress={() => navigation.openDrawer()}
+        />
+      }
+    >
 
       <SectionHeading title="Feedback Form" />
 
       <View style={styles.imageContainer}>
-        <FeatureImage sourceUrl="https://www.anydomestichelp.com/images/ff.jpg" />
+        <FeatureImage 
+          sourceUrl="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&q=80" 
+          aspectRatio={2.4}
+          borderRadius={18}
+        />
       </View>
 
       <View style={styles.form}>

@@ -39,13 +39,18 @@ const EmployeeProfilesScreen: React.FC<any> = ({ route, navigation }) => {
     : pageProfiles.filter((p) => p.jobCategory.toLowerCase() === selectedCategory.toLowerCase());
 
   return (
-    <ScreenContainer scrollEnabled={true} backgroundColor={colors.background}>
-      <AppHeader
-        title="Profiles"
-        showBackButton={true}
-        onBackPress={() => navigation.goBack()}
-        onMenuPress={() => navigation.openDrawer()}
-      />
+    <ScreenContainer
+      scrollEnabled={true}
+      backgroundColor={colors.background}
+      header={
+        <AppHeader
+          title="Profiles"
+          showBackButton={true}
+          onBackPress={() => navigation.goBack()}
+          onMenuPress={() => navigation.openDrawer()}
+        />
+      }
+    >
 
       <SectionHeading
         title="Few Employee Profiles"

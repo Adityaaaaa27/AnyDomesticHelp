@@ -70,25 +70,35 @@ const PartnerUsScreen: React.FC<any> = ({ navigation }) => {
         returnTo: 'MainDrawer',
       });
     } catch {
-      Alert.alert('Submission Failed', 'Please try again or call us on 022-66661314.');
+      Alert.alert('Submission Failed', 'Please try again or call us on 7977409406.');
     } finally {
       setSubmitting(false);
     }
   });
 
   return (
-    <ScreenContainer scrollEnabled={true} keyboardAvoiding={true} backgroundColor={colors.background}>
-      <AppHeader
-        title="Partner Us"
-        showBackButton={true}
-        onBackPress={() => navigation.goBack()}
-        onMenuPress={() => navigation.openDrawer()}
-      />
+    <ScreenContainer
+      scrollEnabled={true}
+      keyboardAvoiding={true}
+      backgroundColor={colors.background}
+      header={
+        <AppHeader
+          title="Partner Us"
+          showBackButton={true}
+          onBackPress={() => navigation.goBack()}
+          onMenuPress={() => navigation.openDrawer()}
+        />
+      }
+    >
 
       <SectionHeading title="Partner Registration Form" />
 
       <View style={styles.imageContainer}>
-        <FeatureImage sourceUrl="https://www.anydomestichelp.com/images/part.jpg" />
+        <FeatureImage 
+          sourceUrl="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=800&q=80" 
+          aspectRatio={2.4}
+          borderRadius={18}
+        />
       </View>
 
       <View style={styles.form}>

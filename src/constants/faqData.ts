@@ -12,7 +12,7 @@ export const FAQ_DATA: FAQItem[] = [
       'We have a very simple procedure for hiring an employee:\n\n' +
       'i) Click on the EMPLOYER section of the homepage fill in the details given in the Employer Form and get registered. After registration you can login with your Username and Password after which you will find 4 different sections of Employer Requirement Forms they are Silver plan, Gold Plan, Gold Plus Premium and NRI Plan. For details on various plans kindly visit the Terms and Conditions.\n\n' +
       'ii) After submission of the Employer Requirement Form, anydomestichelp.com will start working on your requirement for the desired candidate as given by you in the employer requirement form. This procedure will take maximum 3 days.\n\n' +
-      'iii) For further details you can also call us on our numbers 022-66661314/ 022-66661414 / 09029793490 or email us at info@anydomestichelp.com OR Chat with us Online right now.',
+      'iii) For further details you can also call or WhatsApp us on 7977409406 / 022-66661314 or email us at info@anydomestichelp.com OR Chat with us Online right now.',
   },
   {
     id: 'faq-2',

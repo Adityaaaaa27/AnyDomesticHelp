@@ -82,4 +82,8 @@ server/package-lock.json
 # Expo
 .expo/
 
-
+# Credentials & secrets
+credentials.json
+fcm-service-account.json
+firebase-debug.log
+*.jks

@@ -68,7 +68,7 @@ export const PRIVACY_POLICY_SECTIONS: PrivacySection[] = [
     title: 'Contact Us',
     paragraphs: [
       'If you have questions or comments about this Privacy Policy, please contact us at:',
-      'Any Domestic Help\n54, Mamta \'A\' wing, A.M. Marg, Prabhadevi, Mumbai - 400 025\nPhone: 022-66661314 / 9820108341\nEmail: info@anydomestichelp.com',
+      'Any Domestic Help\n54, Mamta \'A\' wing, A.M. Marg, Prabhadevi, Mumbai - 400 025\nPhone: 7977409406 / 022-66661314\nEmail: info@anydomestichelp.com',
     ],
   },
 ];

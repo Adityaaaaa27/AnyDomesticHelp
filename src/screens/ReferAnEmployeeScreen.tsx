@@ -76,25 +76,35 @@ const ReferAnEmployeeScreen: React.FC<any> = ({ navigation }) => {
         returnTo: 'MainDrawer',
       });
     } catch {
-      Alert.alert('Submission Failed', 'Please try again or call us on 022-66661314.');
+      Alert.alert('Submission Failed', 'Please try again or call us on 7977409406.');
     } finally {
       setSubmitting(false);
     }
   });
 
   return (
-    <ScreenContainer scrollEnabled={true} keyboardAvoiding={true} backgroundColor={colors.background}>
-      <AppHeader
-        title="Refer Employee"
-        showBackButton={true}
-        onBackPress={() => navigation.goBack()}
-        onMenuPress={() => navigation.openDrawer()}
-      />
+    <ScreenContainer
+      scrollEnabled={true}
+      keyboardAvoiding={true}
+      backgroundColor={colors.background}
+      header={
+        <AppHeader
+          title="Refer Employee"
+          showBackButton={true}
+          onBackPress={() => navigation.goBack()}
+          onMenuPress={() => navigation.openDrawer()}
+        />
+      }
+    >
 
       <SectionHeading title="Employee Details" />
 
       <View style={styles.imageContainer}>
-        <FeatureImage sourceUrl="https://www.anydomestichelp.com/images/kaam.jpg" />
+        <FeatureImage 
+          sourceUrl="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&q=80" 
+          aspectRatio={2.4}
+          borderRadius={18}
+        />
       </View>
 
       <View style={styles.form}>

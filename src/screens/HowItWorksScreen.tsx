@@ -23,13 +23,18 @@ const VALUE_DELIVERED = [
 
 const HowItWorksScreen: React.FC<any> = ({ navigation }) => {
   return (
-    <ScreenContainer scrollEnabled={true} backgroundColor={colors.background}>
-      <AppHeader
-        title="How It Works"
-        showBackButton={true}
-        onBackPress={() => navigation.goBack()}
-        onMenuPress={() => navigation.openDrawer()}
-      />
+    <ScreenContainer
+      scrollEnabled={true}
+      backgroundColor={colors.background}
+      header={
+        <AppHeader
+          title="How It Works"
+          showBackButton={true}
+          onBackPress={() => navigation.goBack()}
+          onMenuPress={() => navigation.openDrawer()}
+        />
+      }
+    >
 
       <SectionHeading title="How Any Domestic Help Works" />
 
@@ -50,8 +55,8 @@ const HowItWorksScreen: React.FC<any> = ({ navigation }) => {
 
       <ContentParagraph>
         An employer can also call us on{' '}
-        <Text style={styles.boldPhone} onPress={() => callPhone('022-66661314')}>
-          022-66661314
+        <Text style={styles.boldPhone} onPress={() => callPhone('7977409406')}>
+          7977409406
         </Text>{' '}
         from anywhere in the world and connect directly with our call centre.
       </ContentParagraph>

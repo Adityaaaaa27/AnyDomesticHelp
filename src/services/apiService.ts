@@ -14,11 +14,16 @@ const sendToGoogleSheetDirectly = async (
   try {
     const res = await fetch(CONFIG.GOOGLE_SCRIPT_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify({ formType, ...payloadData }),
     });
-    const resData = await res.json();
-    return !!resData?.success;
+    const text = await res.text();
+    try {
+      const resData = JSON.parse(text);
+      return !!resData?.success;
+    } catch {
+      return res.ok;
+    }
   } catch (err: any) {
     console.warn(`Direct Google Sheet sync error (${formType}):`, err?.message);
     return false;
@@ -61,10 +66,11 @@ const fetchWithTimeout = async (
       }
     }
 
-    return new Response(JSON.stringify({ success: true, id: `req_${Date.now()}`, synced }), {
+    return {
+      ok: true,
       status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    });
+      json: async () => ({ success: true, id: `req_${Date.now()}`, synced }),
+    } as unknown as Response;
   }
 };
 
@@ -94,6 +100,10 @@ export const submitEmployerRegistration = async (
     platform:     'mobile',
   };
 
+  // 1. Send direct to Google Sheets & trigger email notification
+  sendToGoogleSheetDirectly('employer', payload);
+
+  // 2. Send to GoDaddy MySQL backend
   const response = await fetchWithTimeout(
     `${CONFIG.API_BASE_URL}/api/employer-registration`,
     {
@@ -135,6 +145,10 @@ export const submitPartnerRegistration = async (
     platform:      'mobile',
   };
 
+  // 1. Send direct to Google Sheets & trigger email notification
+  sendToGoogleSheetDirectly('partner', payload);
+
+  // 2. Send to GoDaddy MySQL backend
   const response = await fetchWithTimeout(
     `${CONFIG.API_BASE_URL}/api/partner-registration`,
     {
@@ -176,6 +190,10 @@ export const submitEmployeeReferral = async (
     platform:      'mobile',
   };
 
+  // 1. Send direct to Google Sheets & trigger email notification
+  sendToGoogleSheetDirectly('referral', payload);
+
+  // 2. Send to GoDaddy MySQL backend
   const response = await fetchWithTimeout(
     `${CONFIG.API_BASE_URL}/api/employee-referral`,
     {
@@ -217,6 +235,10 @@ export const submitFeedback = async (
     platform:    'mobile',
   };
 
+  // 1. Send direct to Google Sheets & trigger email notification
+  sendToGoogleSheetDirectly('feedback', payload);
+
+  // 2. Send to GoDaddy MySQL backend
   const response = await fetchWithTimeout(
     `${CONFIG.API_BASE_URL}/api/feedback`,
     {
@@ -238,12 +260,24 @@ export const submitFeedback = async (
 
 export const registerPushToken = async (token: string): Promise<void> => {
   try {
-    console.log('Registering Expo Push Token with Google Sheets:', token);
-    await sendToGoogleSheetDirectly('push-token', {
-      token,
-      platform: Platform.OS,
-    });
+    console.log('Registering Expo Push Token with backend & Google Sheets:', token);
+
+    // 1. Sync token directly to Google Sheet 'Push Tokens' tab
+    sendToGoogleSheetDirectly('push-token', { token, platform: Platform.OS });
+
+    // 2. Sync token to server backend
+    const response = await fetchWithTimeout(
+      `${CONFIG.API_BASE_URL}/api/push-token`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, platform: Platform.OS }),
+      },
+      'push-token'
+    );
+    const resData = await response.json();
+    console.log('Push token successfully registered:', resData);
   } catch (err: any) {
-    console.warn('Failed registering push token to Google Sheets:', err?.message);
+    console.warn('Failed registering push token:', err?.message);
   }
 };
