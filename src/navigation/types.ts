@@ -24,6 +24,7 @@ export type RootStackParamList = {
 
   ScanAndPay: undefined;
   Payment: { message?: string } | undefined;
+  Careers: undefined;
 };
 
 export type BottomTabParamList = {

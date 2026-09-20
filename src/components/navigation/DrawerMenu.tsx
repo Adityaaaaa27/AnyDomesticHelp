@@ -32,7 +32,11 @@ const DrawerMenu: React.FC<DrawerMenuProps> = ({ navigation, state }) => {
 
   const handleNavigate = (route: string) => {
     navigation.closeDrawer();
-    navigation.navigate(route);
+    try {
+      navigation.navigate(route);
+    } catch {
+      navigation.getParent()?.navigate(route);
+    }
   };
 
   return (

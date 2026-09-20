@@ -24,6 +24,7 @@ import ManagementTeamScreen from '../screens/ManagementTeamScreen';
 import PrivacyPolicyScreen from '../screens/PrivacyPolicyScreen';
 import TermsAndConditionsScreen from '../screens/TermsAndConditionsScreen';
 import RefundCancellationScreen from '../screens/RefundCancellationScreen';
+import CareersScreen from '../screens/CareersScreen';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -57,6 +58,7 @@ const AppNavigator: React.FC = () => {
         <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
         <Stack.Screen name="TermsAndConditions" component={TermsAndConditionsScreen} />
         <Stack.Screen name="RefundCancellation" component={RefundCancellationScreen} />
+        <Stack.Screen name="Careers" component={CareersScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

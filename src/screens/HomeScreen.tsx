@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Image, Platform }
 import AppHeader from '../components/navigation/AppHeader';
 import ScreenContainer from '../components/layout/ScreenContainer';
 import HeroCarousel from '../components/home/HeroCarousel';
+import FooterComponent from '../components/layout/FooterComponent';
 import { SERVICES, CAROUSEL_SERVICES, CAROUSEL_IMAGES, Service, ServiceKey } from '../constants/services';
 import { EMPLOYEE_PROFILES } from '../constants/employeeProfiles';
 import colors from '../constants/colors';
@@ -105,8 +106,14 @@ const HomeScreen: React.FC<any> = ({ navigation }) => {
           ))}
         </ScrollView>
 
-        <View style={{height: 60}} />
-      </ScrollView>
+         <FooterComponent onNavigate={(route) => {
+           try {
+             navigation.navigate(route);
+           } catch {
+             navigation.getParent()?.navigate(route);
+           }
+         }} />
+       </ScrollView>
     </ScreenContainer>
   );
 };

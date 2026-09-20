@@ -4,35 +4,57 @@
 
 import React from 'react';
 import { Text, StyleSheet, View, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import colors from '../../constants/colors';
 import typography from '../../constants/typography';
 import spacing from '../../constants/spacing';
 
 interface FooterComponentProps {
-  onNavigate: (routeName: string) => void;
+  onNavigate?: (routeName: string) => void;
 }
 
-const FOOTER_LINKS_ROW_1 = [
-  { label: 'Privacy Policy', route: 'PrivacyPolicy' },
-  { label: 'Terms & Conditions', route: 'TermsAndConditions' },
-];
-
-const FOOTER_LINKS_ROW_2 = [
-  { label: 'FAQ', route: 'FAQ' },
+const COMPANY_LINKS = [
+  { label: 'About Us', route: 'AboutUs' },
+  { label: 'Careers', route: 'Careers' },
+  { label: 'How It Works', route: 'HowItWorks' },
+  { label: 'Contact Us', route: 'Contact' },
   { label: 'Management Team', route: 'ManagementTeam' },
 ];
 
-const FOOTER_LINKS_ROW_3 = [
-  { label: 'Refund and Cancellation', route: 'RefundCancellation' },
-];
-
-const FOOTER_NAV = [
-  { label: 'Home', route: 'Home' },
-  { label: 'About Us', route: 'AboutUs' },
-  { label: 'Contact Us', route: 'Contact' },
+const LEGAL_LINKS = [
+  { label: 'Privacy Policy', route: 'PrivacyPolicy' },
+  { label: 'Terms & Conditions', route: 'TermsAndConditions' },
+  { label: 'Refund & Cancellation', route: 'RefundCancellation' },
+  { label: 'FAQ', route: 'FAQ' },
 ];
 
 const FooterComponent: React.FC<FooterComponentProps> = ({ onNavigate }) => {
+  const navigation = useNavigation<any>();
+
+  const handleNavigate = (route: string) => {
+    // 1. If explicit onNavigate callback was passed, try it first
+    if (onNavigate) {
+      try {
+        onNavigate(route);
+        return;
+      } catch (e) {
+        console.warn('onNavigate prop failed, using fallback navigation:', e);
+      }
+    }
+
+    // 2. Direct navigation via react-navigation
+    try {
+      navigation.navigate(route);
+    } catch (e1) {
+      try {
+        // 3. Nested navigator fallback (e.g. from inside drawer or tabs)
+        navigation.getParent()?.navigate(route);
+      } catch (e2) {
+        console.warn('Navigation failed for route:', route, e2);
+      }
+    }
+  };
+
   return (
     <View style={styles.container}>
       {/* Brand */}
@@ -43,46 +65,40 @@ const FooterComponent: React.FC<FooterComponentProps> = ({ onNavigate }) => {
 
       {/* Link Sections */}
       <View style={styles.linksContainer}>
+        {/* Company Column */}
         <View style={styles.linkColumn}>
           <Text style={styles.columnTitle}>COMPANY</Text>
-          <TouchableOpacity
-            onPress={() => onNavigate('AboutUs')}
-            accessibilityRole="link"
-            accessibilityLabel="About Us"
-            style={styles.linkButton}
-          >
-            <Text style={styles.linkText}>About Us</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => onNavigate('HowItWorks')}
-            accessibilityRole="link"
-            accessibilityLabel="How It Works"
-            style={styles.linkButton}
-          >
-            <Text style={styles.linkText}>Careers</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.linkColumn}>
-          <Text style={styles.columnTitle}>LEGAL</Text>
-          {FOOTER_LINKS_ROW_1.map((link) => (
+          {COMPANY_LINKS.map((link) => (
             <TouchableOpacity
               key={link.route}
-              onPress={() => onNavigate(link.route)}
+              onPress={() => handleNavigate(link.route)}
               accessibilityRole="link"
               accessibilityLabel={link.label}
               style={styles.linkButton}
+              activeOpacity={0.7}
+              hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
             >
               <Text style={styles.linkText}>{link.label}</Text>
             </TouchableOpacity>
           ))}
-          <TouchableOpacity
-            onPress={() => onNavigate('TermsAndConditions')}
-            accessibilityRole="link"
-            accessibilityLabel="Terms"
-            style={styles.linkButton}
-          >
-            <Text style={styles.linkText}>Terms</Text>
-          </TouchableOpacity>
+        </View>
+
+        {/* Legal & Help Column */}
+        <View style={styles.linkColumn}>
+          <Text style={styles.columnTitle}>LEGAL & HELP</Text>
+          {LEGAL_LINKS.map((link) => (
+            <TouchableOpacity
+              key={link.route}
+              onPress={() => handleNavigate(link.route)}
+              accessibilityRole="link"
+              accessibilityLabel={link.label}
+              style={styles.linkButton}
+              activeOpacity={0.7}
+              hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
+            >
+              <Text style={styles.linkText}>{link.label}</Text>
+            </TouchableOpacity>
+          ))}
         </View>
       </View>
 
@@ -91,7 +107,7 @@ const FooterComponent: React.FC<FooterComponentProps> = ({ onNavigate }) => {
 
       {/* Copyright */}
       <Text style={styles.copyright}>
-        © 2024 Any Domestic Help. All rights reserved.
+        © 2026 Any Domestic Help. All rights reserved.
       </Text>
     </View>
   );
@@ -117,11 +133,11 @@ const styles = StyleSheet.create({
   },
   linksContainer: {
     flexDirection: 'row',
-    justifyContent: 'flex-start',
-    gap: spacing.xxl,
+    justifyContent: 'space-between',
     marginBottom: spacing.lg,
   },
   linkColumn: {
+    flex: 1,
     gap: spacing.sm,
   },
   columnTitle: {
@@ -134,6 +150,7 @@ const styles = StyleSheet.create({
   linkButton: {
     minHeight: spacing.minTouchTarget / 2,
     justifyContent: 'center',
+    paddingVertical: 4,
   },
   linkText: {
     fontSize: typography.fontSize.bodySmall,
