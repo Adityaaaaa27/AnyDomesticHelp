@@ -43,7 +43,7 @@ const DrawerMenu: React.FC<DrawerMenuProps> = ({ navigation, state }) => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>{t.appName}</Text>
-        <Text style={styles.headerSubtitle}>Mumbai's Manpower Agency</Text>
+        <Text style={styles.headerSubtitle}>India's Domestic Manpower Platform</Text>
       </View>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {DRAWER_ITEMS.map((item) => {

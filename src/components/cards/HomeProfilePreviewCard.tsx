@@ -17,7 +17,7 @@ const HomeProfilePreviewCard: React.FC<HomeProfilePreviewCardProps> = ({
   name,
   jobCategory,
   rating = 4.8,
-  location = 'Mumbai, India',
+  location = 'Pan-India',
   imageUrl,
   onPressMore,
 }) => {

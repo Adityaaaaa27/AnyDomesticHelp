@@ -11,7 +11,7 @@ import { qrcode } from '../assets/images';
 const ScanAndPayScreen: React.FC<any> = ({ navigation }) => {
   const handlePayViaUPI = () => {
     // Launch standard UPI link intent (e.g. upi://pay)
-    const upiUrl = 'upi://pay?pa=mumbaichris60@okhdfcbank&pn=chris%20Mumbai&am=1000&cu=INR&tn=Registration%20Fee';
+    const upiUrl = 'upi://pay?pa=mumbaichris60@okhdfcbank&pn=Any%20Domestic%20Help&am=1000&cu=INR&tn=Registration%20Fee';
     Linking.openURL(upiUrl).catch(() => {
       Alert.alert(
         'UPI Apps Missing',

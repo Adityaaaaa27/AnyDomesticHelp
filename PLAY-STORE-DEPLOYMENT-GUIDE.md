@@ -14,26 +14,26 @@
 | Field | Content | Character Count / Policy Status |
 | :--- | :--- | :--- |
 | **App name** | `Any Domestic Help` | 17 / 30 chars |
-| **Short description** | `Connect with domestic helpers, maids, cooks, and caregivers in Mumbai.` | 70 / 80 chars |
+| **Short description** | `Connect with domestic helpers, maids, cooks, and caregivers across India.` | 74 / 80 chars |
 | **App Category** | `House & Home` (or `Business` / `Lifestyle`) | Compliant |
 | **Content Rating** | `Everyone` (PEGI 3) | No violence, no adult content |
 | **Target Audience** | `18 and older` | Standard adult household utility |
 | **Privacy Policy URL**| `https://anydomestichelp.com/privacy-policy.html` | Live & compliant |
 | **Contact Email** | `support@anydomestichelp.com` (or `anydomestichelp@gmail.com`) | Active mailbox |
-| **Contact Phone** | `+91 98200 00000` | Mumbai support helpline |
+| **Contact Phone** | `+91 98200 00000` | National support helpline |
 | **Website** | `https://anydomestichelp.com` | Official website |
 
 ### Full Description (Copy & Paste):
 ```text
-AnyDomesticHelp connects Mumbai households with domestic helpers and home care assistance. Easily submit your domestic requirements and find candidates for full-time, part-time, or live-in home support.
+AnyDomesticHelp connects households across India with trusted domestic helpers and home care assistance. Easily submit your domestic requirements and find candidates for full-time, part-time, or live-in home support.
 
 Key Features & Services:
 • Domestic Service Categories: Browse categories including House Maids, Cooks & Chefs, Babysitters & Nannies, Patient Care Attendants, Elderly Care, and Drivers.
 • Helper Profiles: Review candidate profiles with details on experience, skill categories, and background documentation.
 • Submit Requirements: Register your household needs through a guided registration form to receive relevant helper recommendations.
 • Candidate Referrals: Submit helper details to connect domestic workers with families seeking home assistance.
-• Agency Collaboration: Dedicated registration section for domestic manpower agencies and contractors in Mumbai.
-• Customer Support: Contact our Mumbai support team directly via Phone, Email, or WhatsApp.
+• Agency Collaboration: Dedicated registration section for domestic manpower agencies and contractors across India.
+• Customer Support: Contact our national support team directly via Phone, Email, or WhatsApp.
 • In-App UPI Payment: Complete service fee payments directly using UPI QR code scan and pay.
 
 Whether you need daily cleaning, cooking, child care, or elderly assistance, AnyDomesticHelp simplifies finding domestic support for your home.

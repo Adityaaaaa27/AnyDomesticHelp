@@ -100,7 +100,7 @@ const HomeScreen: React.FC<any> = ({ navigation }) => {
                  <Text style={styles.profileName}>{profile.name}</Text>
                  <Text style={styles.profileRole}>{profile.jobCategory}</Text>
                  <View style={styles.profileDivider} />
-                 <Text style={styles.profileExp}>{profile.experience} • Mumbai</Text>
+                 <Text style={styles.profileExp}>{profile.experience} • India</Text>
                </View>
              </TouchableOpacity>
           ))}

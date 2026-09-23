@@ -34,9 +34,12 @@ const ContactScreen: React.FC<any> = ({ navigation }) => {
       <View style={styles.officeCard}>
         <View style={styles.officeHeader}>
           <Text style={styles.officeIcon}>🏢</Text>
-          <Text style={styles.officeTitle}>Registered Office</Text>
+          <Text style={styles.officeTitle}>Registered Corporate Office</Text>
         </View>
         <Text style={styles.officeAddress}>{OFFICE_ADDRESS}</Text>
+        <View style={styles.panIndiaBadge}>
+          <Text style={styles.panIndiaBadgeText}>🇮🇳 Service Coverage: All Over India (Pan-India)</Text>
+        </View>
         <TouchableOpacity
           onPress={() => openMaps(OFFICE_ADDRESS)}
           style={styles.mapLink}
@@ -204,6 +207,22 @@ const styles = StyleSheet.create({
   },
   faqBtnText: {
     fontSize: typography.fontSize.bodySmall,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.primary,
+  },
+  panIndiaBadge: {
+    marginTop: spacing.sm,
+    marginBottom: spacing.xs,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    backgroundColor: colors.primaryLight,
+    borderRadius: 8,
+    alignSelf: 'flex-start',
+    borderWidth: 1,
+    borderColor: colors.primaryBorder,
+  },
+  panIndiaBadgeText: {
+    fontSize: typography.fontSize.caption,
     fontWeight: typography.fontWeight.bold,
     color: colors.primary,
   },

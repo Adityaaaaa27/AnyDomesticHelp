@@ -36,7 +36,7 @@ const CareersScreen: React.FC<any> = ({ navigation }) => {
       <SectionHeading title="Work With Us" />
 
       <ContentParagraph>
-        Any Domestic Help is Mumbai's leading household staffing platform. We connect skilled domestic workers, caregivers, and drivers with reliable families and households across Mumbai.
+        Any Domestic Help is India's leading household staffing platform. We connect skilled domestic workers, caregivers, and drivers with reliable families and households across India.
       </ContentParagraph>
 
       <SectionHeading title="Current Openings" />
@@ -63,7 +63,7 @@ const CareersScreen: React.FC<any> = ({ navigation }) => {
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Manpower Agencies & Partners</Text>
           <Text style={styles.cardDesc}>
-            Are you a registered manpower agency or contractor in Mumbai? Collaborate with us to place qualified candidates.
+            Are you a registered manpower agency or contractor in India? Collaborate with us to place qualified candidates.
           </Text>
           <TouchableOpacity
             style={[styles.primaryBtn, styles.secondaryBtn]}

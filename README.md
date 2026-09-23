@@ -1,6 +1,6 @@
 # Any Domestic Help Mobile App
 
-A complete, production-ready React Native (bare workflow) mobile application for **Any Domestic Help** (anydomestichelp.com) — a domestic manpower placement service based in Mumbai.
+A complete, production-ready React Native (bare workflow) mobile application for **Any Domestic Help** (anydomestichelp.com) — a nationwide domestic manpower placement platform serving households across India.
 
 ## Features
 
