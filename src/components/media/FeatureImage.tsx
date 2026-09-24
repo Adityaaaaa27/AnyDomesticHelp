@@ -1,11 +1,15 @@
 /**
  * FeatureImage — Standard image display within content sections.
+ * Uses expo-image for reliable cross-device caching and loading.
  */
 
-import React, { useState } from 'react';
-import { StyleSheet, Image, View, ActivityIndicator } from 'react-native';
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
+import { Image } from 'expo-image';
 import colors from '../../constants/colors';
 import spacing from '../../constants/spacing';
+
+const PLACEHOLDER = require('../../assets/placeholder.png');
 
 interface FeatureImageProps {
   sourceUrl: string;
@@ -20,29 +24,21 @@ const FeatureImage: React.FC<FeatureImageProps> = ({
   borderRadius = spacing.cardBorderRadius,
   style,
 }) => {
-  const [error, setError] = useState(false);
-
   return (
     <View style={[styles.container, { aspectRatio, borderRadius }, style]}>
       <Image
         source={{ uri: sourceUrl }}
         style={[styles.image, { borderRadius }]}
-        resizeMode="cover"
-        onError={() => {
-          setError(true);
-        }}
+        contentFit="cover"
+        // Disk cache keeps image even after app restart
+        cachePolicy="disk"
+        // Shown while image loads
+        placeholder={PLACEHOLDER}
+        // Smooth cross-fade when image arrives
+        transition={300}
+        // Fallback to placeholder on error
+        onError={() => {}}
       />
-      {error && (
-        <View style={[styles.errorContainer, { borderRadius }]}>
-          <View style={styles.noPhotoBox}>
-            <Image
-              source={require('../../assets/placeholder.png')}
-              style={styles.placeholderIcon}
-              resizeMode="contain"
-            />
-          </View>
-        </View>
-      )}
     </View>
   );
 };
@@ -58,29 +54,6 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: '100%',
-  },
-  spinner: {
-    position: 'absolute',
-    zIndex: 1,
-  },
-  errorContainer: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    backgroundColor: colors.disabledBg,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  noPhotoBox: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  placeholderIcon: {
-    width: 60,
-    height: 60,
-    opacity: 0.3,
   },
 });
 

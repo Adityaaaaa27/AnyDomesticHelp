@@ -3,7 +3,8 @@
  */
 
 import React from 'react';
-import { StyleSheet, Image, View, Dimensions } from 'react-native';
+import { StyleSheet, View, Dimensions } from 'react-native';
+import { Image } from 'expo-image';
 import colors from '../../constants/colors';
 
 const { width } = Dimensions.get('window');
@@ -21,7 +22,9 @@ const FullWidthBanner: React.FC<FullWidthBannerProps> = ({
       <Image
         source={{ uri: sourceUrl }}
         style={styles.image}
-        resizeMode="contain"
+        contentFit="contain"
+        cachePolicy="disk"
+        transition={300}
       />
     </View>
   );

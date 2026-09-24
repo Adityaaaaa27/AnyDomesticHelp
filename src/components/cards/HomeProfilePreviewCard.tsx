@@ -1,8 +1,11 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { Image } from 'expo-image';
 import colors from '../../constants/colors';
 import typography from '../../constants/typography';
 import spacing from '../../constants/spacing';
+
+const PROFILE_PLACEHOLDER = require('../../assets/placeholder.png');
 
 interface HomeProfilePreviewCardProps {
   name: string;
@@ -23,7 +26,15 @@ const HomeProfilePreviewCard: React.FC<HomeProfilePreviewCardProps> = ({
 }) => {
   return (
     <View style={styles.card}>
-      <Image source={{ uri: imageUrl }} style={styles.image} />
+      <Image
+        source={{ uri: imageUrl }}
+        style={styles.image}
+        contentFit="cover"
+        cachePolicy="disk"
+        placeholder={PROFILE_PLACEHOLDER}
+        placeholderContentFit="cover"
+        transition={250}
+      />
       <View style={styles.content}>
         <View style={styles.headerRow}>
           <Text style={styles.name}>{name}</Text>

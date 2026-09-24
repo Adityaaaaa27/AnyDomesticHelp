@@ -3,7 +3,8 @@
  */
 
 import React from 'react';
-import { Text, StyleSheet, TouchableOpacity, Image, View } from 'react-native';
+import { Text, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Image } from 'expo-image';
 import colors from '../../constants/colors';
 import typography from '../../constants/typography';
 import spacing from '../../constants/spacing';
@@ -30,8 +31,10 @@ const ServiceImageCard: React.FC<ServiceImageCardProps> = ({
       <Image
         source={{ uri: imageUrl }}
         style={styles.image}
-        resizeMode="cover"
-        defaultSource={require('../../assets/placeholder.png')}
+        contentFit="cover"
+        cachePolicy="disk"
+        placeholder={require('../../assets/placeholder.png')}
+        transition={200}
       />
       <View style={styles.overlay}>
         <Text style={styles.label}>{label}</Text>

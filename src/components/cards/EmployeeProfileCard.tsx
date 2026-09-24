@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { Image } from 'expo-image';
 import colors from '../../constants/colors';
 import typography from '../../constants/typography';
 import spacing from '../../constants/spacing';
+
+const PROFILE_PLACEHOLDER = require('../../assets/placeholder.png');
 
 export interface EmployeeProfileCardProps {
   name: string;
@@ -26,8 +29,6 @@ const EmployeeProfileCard: React.FC<EmployeeProfileCardProps> = ({
   onPressBookmark,
 }) => {
   const [isBookmarked, setIsBookmarked] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
 
   const toggleBookmark = () => {
     setIsBookmarked(!isBookmarked);
@@ -37,24 +38,15 @@ const EmployeeProfileCard: React.FC<EmployeeProfileCardProps> = ({
   return (
     <View style={styles.card}>
       <View style={styles.imageContainer}>
-        {loading && !error && (
-          <ActivityIndicator style={styles.spinner} color={colors.primary} />
-        )}
         <Image
           source={{ uri: imageUrl }}
           style={styles.image}
-          onLoadStart={() => setLoading(true)}
-          onLoadEnd={() => setLoading(false)}
-          onError={() => {
-            setLoading(false);
-            setError(true);
-          }}
+          contentFit="cover"
+          cachePolicy="disk"
+          placeholder={PROFILE_PLACEHOLDER}
+          placeholderContentFit="cover"
+          transition={250}
         />
-        {error && (
-          <View style={styles.errorContainer}>
-            <Text style={styles.errorEmoji}>👤</Text>
-          </View>
-        )}
       </View>
 
       <View style={styles.details}>
@@ -89,6 +81,12 @@ const EmployeeProfileCard: React.FC<EmployeeProfileCardProps> = ({
             <Text style={styles.infoIcon}>📅</Text>
             <Text style={styles.infoText}>{timing}</Text>
           </View>
+          {salary && (
+            <View style={styles.infoRow}>
+              <Text style={styles.infoIcon}>💰</Text>
+              <Text style={[styles.infoText, styles.salaryText]}>{salary}<Text style={styles.monthSuffix}>/mo</Text></Text>
+            </View>
+          )}
         </View>
       </View>
     </View>
@@ -117,28 +115,10 @@ const styles = StyleSheet.create({
     borderRadius: spacing.cardBorderRadius,
     backgroundColor: colors.backgroundGrey,
     overflow: 'hidden',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   image: {
     width: '100%',
     height: '100%',
-  },
-  spinner: {
-    position: 'absolute',
-  },
-  errorContainer: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    backgroundColor: colors.disabledBg,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  errorEmoji: {
-    fontSize: 28,
   },
   details: {
     flex: 1,

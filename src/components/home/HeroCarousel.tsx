@@ -6,10 +6,10 @@ import {
   FlatList,
   Dimensions,
   TouchableOpacity,
-  Image,
   NativeSyntheticEvent,
   NativeScrollEvent,
 } from 'react-native';
+import { Image } from 'expo-image';
 import colors from '../../constants/colors';
 import spacing from '../../constants/spacing';
 import typography from '../../constants/typography';
@@ -167,7 +167,9 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ onSelectService }) => {
           <Image
             source={{ uri: item.imageUrl }}
             style={styles.bgImage}
-            resizeMode="cover"
+            contentFit="cover"
+            cachePolicy="disk"
+            transition={300}
           />
           <View style={[styles.imageOverlay, { backgroundColor: item.bgColor }]} />
         </View>

@@ -28,11 +28,12 @@ export const callPhone = async (number: string): Promise<void> => {
  * Open WhatsApp with the given phone number.
  * Falls back to App Store / Play Store if WhatsApp is not installed.
  */
-export const openWhatsApp = async (number: string): Promise<void> => {
+export const openWhatsApp = async (number: string, text?: string): Promise<void> => {
   const cleanNumber = number.replace(/[^0-9]/g, '');
   // Add country code if not present
   const fullNumber = cleanNumber.startsWith('91') ? cleanNumber : `91${cleanNumber}`;
-  const whatsappUrl = `whatsapp://send?phone=${fullNumber}`;
+  const encodedText = text ? `&text=${encodeURIComponent(text)}` : '';
+  const whatsappUrl = `whatsapp://send?phone=${fullNumber}${encodedText}`;
 
   try {
     const supported = await Linking.canOpenURL(whatsappUrl);

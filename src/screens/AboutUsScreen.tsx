@@ -5,7 +5,7 @@ import AppHeader from '../components/navigation/AppHeader';
 import SectionHeading from '../components/layout/SectionHeading';
 import ContentParagraph from '../components/layout/ContentParagraph';
 import BulletList from '../components/layout/BulletList';
-import FeatureImage from '../components/media/FeatureImage';
+import AppVideoPlayer from '../components/media/AppVideoPlayer';
 import FooterComponent from '../components/layout/FooterComponent';
 import colors from '../constants/colors';
 import spacing from '../constants/spacing';
@@ -36,7 +36,12 @@ const AboutUsScreen: React.FC<any> = ({ navigation }) => {
       <SectionHeading title="About Us" />
 
       <View style={styles.imageContainer}>
-        <FeatureImage sourceUrl="https://www.anydomestichelp.com/images/2.jpeg" />
+        <AppVideoPlayer
+          autoPlay={false}
+          loop={false}
+          showTitleHeader={false}
+          borderRadius={spacing.cardBorderRadius}
+        />
       </View>
 
       <SectionHeading title="Mission" />

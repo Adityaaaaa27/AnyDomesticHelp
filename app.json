@@ -6,7 +6,6 @@
     "orientation": "portrait",
     "icon": "./src/assets/logo.png",
     "userInterfaceStyle": "light",
-
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -42,7 +41,8 @@
           "icon": "./src/assets/logo.png",
           "color": "#0E6F5C"
         }
-      ]
+      ],
+      "expo-image"
     ],
     "extra": {
       "eas": {

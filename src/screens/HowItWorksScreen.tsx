@@ -5,7 +5,7 @@ import AppHeader from '../components/navigation/AppHeader';
 import SectionHeading from '../components/layout/SectionHeading';
 import ContentParagraph from '../components/layout/ContentParagraph';
 import BulletList from '../components/layout/BulletList';
-import FeatureImage from '../components/media/FeatureImage';
+import AppVideoPlayer from '../components/media/AppVideoPlayer';
 import FooterComponent from '../components/layout/FooterComponent';
 import { callPhone } from '../utils/deepLinks';
 import colors from '../constants/colors';
@@ -39,7 +39,12 @@ const HowItWorksScreen: React.FC<any> = ({ navigation }) => {
       <SectionHeading title="How Any Domestic Help Works" />
 
       <View style={styles.imageContainer}>
-        <FeatureImage sourceUrl="https://www.anydomestichelp.com/images/1.jpeg" />
+        <AppVideoPlayer
+          autoPlay={false}
+          loop={false}
+          showTitleHeader={false}
+          borderRadius={spacing.cardBorderRadius}
+        />
       </View>
 
       <ContentParagraph>

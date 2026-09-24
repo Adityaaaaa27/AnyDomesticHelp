@@ -1,8 +1,10 @@
 import React from 'react';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Image, Platform } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Platform } from 'react-native';
+import { Image } from 'expo-image';
 import AppHeader from '../components/navigation/AppHeader';
 import ScreenContainer from '../components/layout/ScreenContainer';
 import HeroCarousel from '../components/home/HeroCarousel';
+import HomeVideoSection from '../components/home/HomeVideoSection';
 import FooterComponent from '../components/layout/FooterComponent';
 import { SERVICES, CAROUSEL_SERVICES, CAROUSEL_IMAGES, Service, ServiceKey } from '../constants/services';
 import { EMPLOYEE_PROFILES } from '../constants/employeeProfiles';
@@ -32,6 +34,9 @@ const HomeScreen: React.FC<any> = ({ navigation }) => {
         {/* ANIMATED HERO CAROUSEL SLIDER */}
         <HeroCarousel onSelectService={handleServiceSelect} />
 
+        {/* WHO WE ARE & WHAT WE PROVIDE - VIDEO BUTTON & PLAYER */}
+        <HomeVideoSection />
+
         {/* OUR SERVICES - AESTHETIC HORIZONTAL BARS */}
         <View style={[styles.sectionHeader, { marginTop: spacing.xl }]}>
           <Text style={styles.sectionTitle}>{t.ourServices}</Text>
@@ -53,7 +58,9 @@ const HomeScreen: React.FC<any> = ({ navigation }) => {
                   <Image 
                     source={{ uri: item.imageUrl }} 
                     style={styles.serviceBarImage}
-                    resizeMode="cover"
+                    contentFit="cover"
+                    cachePolicy="disk"
+                    transition={200}
                   />
                 </View>
 
@@ -91,7 +98,13 @@ const HomeScreen: React.FC<any> = ({ navigation }) => {
                onPress={() => navigation.navigate('EmployeeProfiles', { page: 1 })}
              >
                <View style={styles.profileHeader}>
-                 <Image source={{uri: profile.imageUrl}} style={styles.profileImage} />
+                 <Image
+                   source={{ uri: profile.imageUrl }}
+                   style={styles.profileImage}
+                   contentFit="cover"
+                   cachePolicy="disk"
+                   transition={200}
+                 />
                  <View style={styles.ratingBadge}>
                    <Text style={styles.ratingText}>★ 4.8</Text>
                  </View>
