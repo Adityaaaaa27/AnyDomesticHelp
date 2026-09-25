@@ -1,6 +1,6 @@
 {
   "name": "AnyDomesticHelp",
-  "version": "0.0.1",
+  "version": "1.0.7",
   "private": true,
   "scripts": {
     "android": "expo run:android",
@@ -20,7 +20,6 @@
     "@react-navigation/stack": "^7.0.10",
     "axios": "^1.7.9",
     "expo": "^57.0.24",
-    "expo-av": "^16.0.8",
     "expo-constants": "^57.0.19",
     "expo-device": "^57.0.2",
     "expo-image": "~57.0.5",

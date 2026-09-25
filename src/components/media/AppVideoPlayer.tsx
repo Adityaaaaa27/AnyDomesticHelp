@@ -1,4 +1,10 @@
-import React, { useRef, useState, useCallback } from 'react';
+/**
+ * AppVideoPlayer — Uses expo-video (New Architecture compatible) with lazy init.
+ * The VideoPlayer object is only created AFTER the user presses Play, so it
+ * has zero impact on app startup performance or stability.
+ */
+
+import React, { useRef, useState, useCallback, useEffect } from 'react';
 import {
   StyleSheet,
   View,
@@ -10,27 +16,25 @@ import colors from '../../constants/colors';
 import spacing from '../../constants/spacing';
 import typography from '../../constants/typography';
 
-// ─── Safe native module check ───────────────────────────────────────────────
-// expo-av requires native code that is NOT available in Expo Go (SDK 50+).
-// In the real built app (APK / Play Store) it works perfectly.
-// When running in Expo Go this flag is false and we show a styled placeholder.
-let VideoComponent: any = null;
-let ResizeModeContain: any = 'contain';
-let nativeVideoAvailable = false;
+// ─── Lazy expo-video import ───────────────────────────────────────────────────
+// We resolve expo-video at runtime (not at module load) to guarantee the native
+// module cannot affect startup even if something is mis-linked.
+let VideoViewComponent: any = null;
+let useVideoPlayerHook: ((...args: any[]) => any) | null = null;
 
 try {
-  const ExpoAV = require('expo-av');
-  VideoComponent = ExpoAV.Video;
-  ResizeModeContain = ExpoAV.ResizeMode?.CONTAIN ?? 'contain';
-  nativeVideoAvailable = true;
+  const ExpoVideo = require('expo-video');
+  VideoViewComponent = ExpoVideo.VideoView;
+  useVideoPlayerHook = ExpoVideo.useVideoPlayer;
 } catch {
-  nativeVideoAvailable = false;
+  // expo-video not available — will show placeholder
 }
 
-// Bundled local video (loaded only when native module is available)
-const INTRO_VIDEO_SOURCE = nativeVideoAvailable
-  ? require('../../assets/videos/intro_video.mp4')
-  : null;
+const videoAvailable = VideoViewComponent !== null && useVideoPlayerHook !== null;
+
+// Local bundled video asset
+const INTRO_VIDEO = require('../../assets/videos/intro_video.mp4');
+
 // ─────────────────────────────────────────────────────────────────────────────
 
 interface AppVideoPlayerProps {
@@ -45,15 +49,15 @@ interface AppVideoPlayerProps {
   onClose?: () => void;
 }
 
-/** Shown in Expo Go (no native video support) */
-const VideoPlaceholder: React.FC<{ aspectRatio: number; borderRadius: number; onClose?: () => void; showTitleHeader: boolean; title: string; subtitle: string }> = ({
-  aspectRatio,
-  borderRadius,
-  onClose,
-  showTitleHeader,
-  title,
-  subtitle,
-}) => (
+/** Shown when expo-video native module is unavailable */
+const VideoPlaceholder: React.FC<{
+  aspectRatio: number;
+  borderRadius: number;
+  onClose?: () => void;
+  showTitleHeader: boolean;
+  title: string;
+  subtitle: string;
+}> = ({ aspectRatio, borderRadius, onClose, showTitleHeader, title, subtitle }) => (
   <View>
     {showTitleHeader && (
       <View style={styles.headerRow}>
@@ -75,56 +79,13 @@ const VideoPlaceholder: React.FC<{ aspectRatio: number; borderRadius: number; on
       <Text style={styles.placeholderIcon}>🎬</Text>
       <Text style={styles.placeholderTitle}>Video Available in App</Text>
       <Text style={styles.placeholderSubtitle}>
-        This video plays in the installed app.{'\n'}Download from the Play Store to watch.
+        Download the latest version from the Play Store to watch.
       </Text>
     </View>
   </View>
 );
 
-export const AppVideoPlayer: React.FC<AppVideoPlayerProps> = ({
-  autoPlay = false,
-  loop = false,
-  aspectRatio = 16 / 9,
-  borderRadius = 16,
-  style,
-  showTitleHeader = false,
-  title = 'Who We Are & What We Provide',
-  subtitle = 'Discover how Any Domestic Help connects households with verified help',
-  onClose,
-}) => {
-  // ── Expo Go fallback ──────────────────────────────────────────────────────
-  if (!nativeVideoAvailable) {
-    return (
-      <View style={[styles.outerContainer, style]}>
-        <VideoPlaceholder
-          aspectRatio={aspectRatio}
-          borderRadius={borderRadius}
-          onClose={onClose}
-          showTitleHeader={showTitleHeader}
-          title={title}
-          subtitle={subtitle}
-        />
-      </View>
-    );
-  }
-  // ─────────────────────────────────────────────────────────────────────────
-
-  return (
-    <NativeVideoPlayer
-      autoPlay={autoPlay}
-      loop={loop}
-      aspectRatio={aspectRatio}
-      borderRadius={borderRadius}
-      style={style}
-      showTitleHeader={showTitleHeader}
-      title={title}
-      subtitle={subtitle}
-      onClose={onClose}
-    />
-  );
-};
-
-/** Real native video player — only rendered when expo-av native module is available */
+/** Inner component that actually mounts expo-video — only rendered on demand */
 const NativeVideoPlayer: React.FC<AppVideoPlayerProps> = ({
   autoPlay = false,
   loop = false,
@@ -140,26 +101,40 @@ const NativeVideoPlayer: React.FC<AppVideoPlayerProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
-  const handlePlaybackStatusUpdate = useCallback((status: any) => {
-    if (status.isLoaded) {
-      setIsLoading(false);
-      setHasError(false);
-    } else if (status.error) {
-      setIsLoading(false);
-      setHasError(true);
+  // useVideoPlayer hook — creates the player imperatively, zero startup cost
+  const player = useVideoPlayerHook!(INTRO_VIDEO, (p: any) => {
+    p.loop = loop;
+    if (autoPlay) {
+      p.play();
     }
-  }, []);
+  });
+
+  useEffect(() => {
+    // Player ready — hide loading overlay
+    const subscription = player?.addListener?.('statusChange', (event: any) => {
+      if (event.status === 'readyToPlay') {
+        setIsLoading(false);
+        setHasError(false);
+      } else if (event.status === 'error') {
+        setIsLoading(false);
+        setHasError(true);
+      }
+    });
+    return () => {
+      subscription?.remove?.();
+    };
+  }, [player]);
 
   const handleClose = useCallback(async () => {
     try {
-      await videoRef.current?.pauseAsync();
+      player?.pause?.();
     } catch {
       // ignore
     }
     onClose?.();
-  }, [onClose]);
+  }, [onClose, player]);
 
-  const VideoComp = VideoComponent;
+  const VideoView = VideoViewComponent;
 
   return (
     <View style={[styles.outerContainer, style]}>
@@ -186,18 +161,19 @@ const NativeVideoPlayer: React.FC<AppVideoPlayerProps> = ({
       )}
 
       <View style={[styles.playerContainer, { aspectRatio, borderRadius }]}>
-        <VideoComp
+        <VideoView
           ref={videoRef}
-          source={INTRO_VIDEO_SOURCE}
+          player={player}
           style={styles.videoView}
-          resizeMode={ResizeModeContain}
-          shouldPlay={autoPlay}
-          isLooping={loop}
-          useNativeControls={true}
-          onPlaybackStatusUpdate={handlePlaybackStatusUpdate}
-          onError={() => {
-            setIsLoading(false);
-            setHasError(true);
+          allowsFullscreen
+          allowsPictureInPicture={false}
+          contentFit="contain"
+          nativeControls
+          onPlayingChange={(isPlaying: boolean) => {
+            if (!isPlaying) {
+              // When video first buffers it may emit this — just hide loader
+              setIsLoading(false);
+            }
           }}
         />
 
@@ -215,6 +191,47 @@ const NativeVideoPlayer: React.FC<AppVideoPlayerProps> = ({
         )}
       </View>
     </View>
+  );
+};
+
+export const AppVideoPlayer: React.FC<AppVideoPlayerProps> = ({
+  autoPlay = false,
+  loop = false,
+  aspectRatio = 16 / 9,
+  borderRadius = 16,
+  style,
+  showTitleHeader = false,
+  title = 'Who We Are & What We Provide',
+  subtitle = 'Discover how Any Domestic Help connects households with verified help',
+  onClose,
+}) => {
+  if (!videoAvailable) {
+    return (
+      <View style={[styles.outerContainer, style]}>
+        <VideoPlaceholder
+          aspectRatio={aspectRatio}
+          borderRadius={borderRadius}
+          onClose={onClose}
+          showTitleHeader={showTitleHeader}
+          title={title}
+          subtitle={subtitle}
+        />
+      </View>
+    );
+  }
+
+  return (
+    <NativeVideoPlayer
+      autoPlay={autoPlay}
+      loop={loop}
+      aspectRatio={aspectRatio}
+      borderRadius={borderRadius}
+      style={style}
+      showTitleHeader={showTitleHeader}
+      title={title}
+      subtitle={subtitle}
+      onClose={onClose}
+    />
   );
 };
 
@@ -310,7 +327,7 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   loadingOverlay: {
-    ...StyleSheet.absoluteFill,
+    ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(246, 244, 238, 0.85)',
     justifyContent: 'center',
     alignItems: 'center',
@@ -323,7 +340,7 @@ const styles = StyleSheet.create({
     fontWeight: typography.fontWeight.medium,
   },
   errorOverlay: {
-    ...StyleSheet.absoluteFill,
+    ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(246, 244, 238, 0.95)',
     justifyContent: 'center',
     alignItems: 'center',

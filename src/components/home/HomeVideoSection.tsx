@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import AppVideoPlayer from '../media/AppVideoPlayer';
 import colors from '../../constants/colors';
 import spacing from '../../constants/spacing';
