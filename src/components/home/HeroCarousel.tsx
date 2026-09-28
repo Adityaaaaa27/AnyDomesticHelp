@@ -78,7 +78,7 @@ const SLIDES: SlideItem[] = [
     badgeEn: '🤱 Certified Childcare',
     badgeHi: '🤱 प्रमाणित बाल देखभाल',
     bgColor: '#1E3524',
-    imageUrl: 'https://images.unsplash.com/photo-1587616211892-b1a23c0d9f7f?auto=format&fit=crop&w=600&q=85',
+    imageUrl: 'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&w=600&q=85',
     serviceKey: 'BabySitter',
     serviceLabel: 'Baby Sitter',
   },
