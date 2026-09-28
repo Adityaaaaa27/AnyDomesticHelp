@@ -32,26 +32,30 @@ const FooterComponent: React.FC<FooterComponentProps> = ({ onNavigate }) => {
   const navigation = useNavigation<any>();
 
   const handleNavigate = (route: string) => {
-    // 1. If explicit onNavigate callback was passed, try it first
+    // 1. If explicit onNavigate callback was passed, use it (most reliable)
     if (onNavigate) {
       try {
         onNavigate(route);
         return;
       } catch (e) {
-        console.warn('onNavigate prop failed, using fallback navigation:', e);
+        // fall through to direct navigation
       }
     }
 
-    // 2. Direct navigation via react-navigation
+    // 2. Try direct navigation (works when called from root stack screens)
     try {
-      navigation.navigate(route);
-    } catch (e1) {
-      try {
-        // 3. Nested navigator fallback (e.g. from inside drawer or tabs)
-        navigation.getParent()?.navigate(route);
-      } catch (e2) {
-        console.warn('Navigation failed for route:', route, e2);
-      }
+      navigation.navigate(route as any);
+      return;
+    } catch {
+      // fall through
+    }
+
+    // 3. Try navigating via the root navigator (needed when inside DrawerNavigator)
+    try {
+      const rootNav = navigation.getParent('root-stack') ?? navigation.getParent();
+      rootNav?.navigate(route as any);
+    } catch (e) {
+      console.warn('Footer navigation failed for route:', route, e);
     }
   };
 
@@ -116,7 +120,8 @@ const FooterComponent: React.FC<FooterComponentProps> = ({ onNavigate }) => {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.backgroundGrey,
-    paddingVertical: spacing.footerPaddingVertical,
+    paddingTop: spacing.footerPaddingVertical,
+    paddingBottom: spacing.footerPaddingVertical + 16,
     paddingHorizontal: spacing.footerPaddingHorizontal,
     marginTop: spacing.xl,
   },
@@ -166,6 +171,8 @@ const styles = StyleSheet.create({
     fontSize: typography.fontSize.caption,
     color: colors.textTertiary,
     textAlign: 'center',
+    paddingHorizontal: spacing.md,
+    lineHeight: 18,
   },
 });
 

@@ -45,7 +45,13 @@ export default function EmployerRegistrationScreen() {
     phone:        yup.string()
                      .matches(/^[6-9]\d{9}$/, t.errPhoneInvalid)
                      .required(t.errPhoneRequired),
-    email:        yup.string().email(t.errEmailInvalid).required(t.errEmailRequired),
+    email:        yup.string()
+                     .email(t.errEmailInvalid)
+                     .matches(
+                       /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/,
+                       t.errEmailInvalid
+                     )
+                     .required(t.errEmailRequired),
     city:         yup.string().required(t.errCityRequired),
     workingHours: yup.string().required(t.errWorkingHoursRequired),
   });

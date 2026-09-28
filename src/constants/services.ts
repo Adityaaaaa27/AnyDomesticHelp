@@ -34,7 +34,7 @@ export const SERVICES: Service[] = [
     desc: 'Loving & experienced infant & child care',       
     descHi: 'शिशु व बच्चों की अनुभवी देखभाल',       
     emoji: '👶', 
-    imageUrl: 'https://www.anydomestichelp.com/images/3.jpeg',
+    imageUrl: 'https://images.unsplash.com/photo-1587616211892-b1a23c0d9f7f?auto=format&fit=crop&w=600&q=85',
     bgColor: colors.serviceBg1 
   },
   { 
@@ -172,8 +172,8 @@ export const CAROUSEL_IMAGES: Record<string, { label: string; image: string }> =
 };
 
 export const WORKING_HOURS = [
-  { label: 'Part Time 4 Hrs',           value: 'Part Time 4 Hrs' },
-  { label: 'Part Time 8 Hrs',           value: 'Full Time 8 Hrs' },
-  { label: 'Part Time 10 Hrs',          value: 'Full Time 10 Hrs' },
-  { label: 'Full Time 24 Hrs (Live In)', value: '24 Hrs Live In' },
+  { label: 'Part Time (4 Hrs / Day)',         value: 'Part Time 4 Hrs' },
+  { label: 'Full Time (8 Hrs / Day)',          value: 'Full Time 8 Hrs' },
+  { label: 'Full Time (10 Hrs / Day)',         value: 'Full Time 10 Hrs' },
+  { label: 'Live In (24 Hrs)',                 value: '24 Hrs Live In' },
 ];

@@ -15,7 +15,7 @@ import spacing from '../../constants/spacing';
 import typography from '../../constants/typography';
 import { useLanguage } from '../../context/LanguageContext';
 
-const SCREEN_WIDTH = Dimensions.get('window').width;
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const CARD_GAP = 12;
 const CARD_WIDTH = SCREEN_WIDTH - spacing.screenHorizontalPadding * 2;
 const SNAP_INTERVAL = CARD_WIDTH + CARD_GAP;
@@ -78,7 +78,7 @@ const SLIDES: SlideItem[] = [
     badgeEn: '🤱 Certified Childcare',
     badgeHi: '🤱 प्रमाणित बाल देखभाल',
     bgColor: '#1E3524',
-    imageUrl: 'https://www.anydomestichelp.com/images/3.jpeg',
+    imageUrl: 'https://images.unsplash.com/photo-1587616211892-b1a23c0d9f7f?auto=format&fit=crop&w=600&q=85',
     serviceKey: 'BabySitter',
     serviceLabel: 'Baby Sitter',
   },
@@ -340,6 +340,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginTop: 'auto',
+    flexWrap: 'wrap',
+    gap: 8,
   },
   badgePill: {
     backgroundColor: 'rgba(255,255,255,0.15)',
@@ -348,6 +350,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.2)',
+    flexShrink: 1,
   },
   badgeText: {
     fontSize: 11,
@@ -357,8 +360,9 @@ const styles = StyleSheet.create({
   bookButton: {
     backgroundColor: colors.textWhite,
     paddingHorizontal: 14,
-    paddingVertical: 6,
+    paddingVertical: 8,
     borderRadius: 14,
+    flexShrink: 0,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.12,

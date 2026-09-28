@@ -53,7 +53,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({
         </View>
 
         <View style={styles.titleSection}>
-          <Text style={styles.title} numberOfLines={1}>
+          <Text style={styles.title} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>
             {displayTitle}
           </Text>
         </View>
@@ -66,7 +66,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({
             accessibilityRole="button"
             accessibilityLabel="Toggle language"
           >
-            <Text style={styles.langText}>{t.langToggle}</Text>
+            <Text style={styles.langText} numberOfLines={1}>{t.langToggle}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   rightSection: {
-    width: 80,
+    width: 90,
     alignItems: 'flex-end',
     justifyContent: 'center',
   },
@@ -138,16 +138,19 @@ const styles = StyleSheet.create({
   },
   langButton: {
     backgroundColor: colors.primary,
-    paddingHorizontal: 12,
+    paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 14,
-    minWidth: 60,
+    minWidth: 56,
+    maxWidth: 88,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   langText: {
     fontSize: 12,
     color: colors.textWhite,
     fontWeight: typography.fontWeight.bold,
+    includeFontPadding: false,
   },
 });
 
