@@ -25,39 +25,25 @@ export const callPhone = async (number: string): Promise<void> => {
 };
 
 /**
- * Open WhatsApp with the given phone number.
- * Falls back to App Store / Play Store if WhatsApp is not installed.
+ * Open WhatsApp chat directly with the given phone number.
+ * Uses the universal https://wa.me/ link — opens in WhatsApp app if installed,
+ * or WhatsApp Web in browser otherwise. Never redirects to the app store.
  */
 export const openWhatsApp = async (number: string, text?: string): Promise<void> => {
   const cleanNumber = number.replace(/[^0-9]/g, '');
-  // Add country code if not present
+  // Add India country code if not already present
   const fullNumber = cleanNumber.startsWith('91') ? cleanNumber : `91${cleanNumber}`;
-  const encodedText = text ? `&text=${encodeURIComponent(text)}` : '';
-  const whatsappUrl = `whatsapp://send?phone=${fullNumber}${encodedText}`;
+  const encodedText = text ? `?text=${encodeURIComponent(text)}` : '';
+  // wa.me universal link — works on all platforms, opens chat directly
+  const waUrl = `https://wa.me/${fullNumber}${encodedText}`;
 
   try {
-    const supported = await Linking.canOpenURL(whatsappUrl);
-    if (supported) {
-      await Linking.openURL(whatsappUrl);
-    } else {
-      // WhatsApp not installed — redirect to store
-      const storeUrl = Platform.select({
-        ios: 'https://apps.apple.com/app/whatsapp-messenger/id310633997',
-        android: 'https://play.google.com/store/apps/details?id=com.whatsapp',
-      });
-      if (storeUrl) {
-        await Linking.openURL(storeUrl);
-      } else {
-        Alert.alert(
-          'WhatsApp Not Installed',
-          'Please install WhatsApp to send a message.',
-        );
-      }
-    }
+    await Linking.openURL(waUrl);
   } catch (error) {
-    Alert.alert('Error', 'Unable to open WhatsApp.');
+    Alert.alert('Error', 'Unable to open WhatsApp. Please try again.');
   }
 };
+
 
 /**
  * Open the email client with the given address pre-filled.
